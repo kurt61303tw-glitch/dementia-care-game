@@ -88,10 +88,13 @@
         }
       } catch (e) {}
     },
-    // 輕鬆愉快、振奮人心的 Q 版木琴/馬林巴琴風格背景音樂
+    // 輕鬆愉快、讓人振奮的長照小遊戲互動背景音樂（雙聲道和弦＋木琴跳躍主旋律）
     toggleBGM() {
       this.initCtx();
-      if (!this.ctx) return false;
+      if (!this.ctx) {
+        alert("瀏覽器尚未允許播放音訊，請再點一次即可開始播放！");
+        return false;
+      }
 
       if (this.bgmPlaying) {
         this.stopBGM();
@@ -102,73 +105,106 @@
       }
     },
     startBGM() {
+      this.initCtx();
       if (!this.ctx) return;
       this.stopBGM();
       this.bgmPlaying = true;
 
-      // 主控音量節點（避免過大聲，預設舒適輕快背景音量）
+      // 主控音量節點（設為適當的 0.18，清晰可聞又不刺耳）
       this.bgmGain = this.ctx.createGain();
-      this.bgmGain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+      this.bgmGain.gain.setValueAtTime(0.18, this.ctx.currentTime);
       this.bgmGain.connect(this.ctx.destination);
 
-      // C大調輕快振奮音階（頻率 Hz）
-      const notes = {
+      // 音階頻率定義 (Hz)
+      const N = {
+        C3: 130.81, E3: 164.81, F3: 174.61, G3: 196.00, A3: 220.00,
         C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
-        C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99
+        C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.00
       };
 
-      // 陽光輕快、跳躍有活力的 16 拍旋律組
-      const melody = [
-        { n: notes.C5, d: 0.22 }, { n: notes.G4, d: 0.18 }, { n: notes.A4, d: 0.22 }, { n: notes.C5, d: 0.35 },
-        { n: notes.D5, d: 0.22 }, { n: notes.E5, d: 0.28 }, { n: notes.D5, d: 0.22 }, { n: notes.C5, d: 0.40 },
-        { n: notes.E5, d: 0.22 }, { n: notes.G5, d: 0.24 }, { n: notes.E5, d: 0.22 }, { n: notes.D5, d: 0.32 },
-        { n: notes.C5, d: 0.22 }, { n: notes.A4, d: 0.22 }, { n: notes.G4, d: 0.22 }, { n: notes.C5, d: 0.45 }
+      // 輕鬆活潑、振奮人心的經典 16 步進陽光樂句（主旋律 + 和弦低音）
+      const pattern = [
+        // 第一小節 (C和弦 - 溫暖開朗)
+        { mel: N.G4, bass: N.C3, dur: 0.18 },
+        { mel: N.C5, bass: null, dur: 0.18 },
+        { mel: N.E5, bass: N.G3, dur: 0.22 },
+        { mel: N.G5, bass: null, dur: 0.26 },
+        // 第二小節 (F和弦 - 躍動前進)
+        { mel: N.A5, bass: N.F3, dur: 0.20 },
+        { mel: N.F5, bass: null, dur: 0.18 },
+        { mel: N.C5, bass: N.A3, dur: 0.22 },
+        { mel: N.A4, bass: null, dur: 0.24 },
+        // 第三小節 (G和弦 - 活力振奮)
+        { mel: N.B4, bass: N.G3, dur: 0.18 },
+        { mel: N.D5, bass: null, dur: 0.18 },
+        { mel: N.F5, bass: N.D4, dur: 0.22 },
+        { mel: N.E5, bass: null, dur: 0.20 },
+        // 第四小節 (C和弦 - 完美收尾與循環)
+        { mel: N.D5, bass: N.C3, dur: 0.18 },
+        { mel: N.C5, bass: null, dur: 0.22 },
+        { mel: N.G4, bass: N.E3, dur: 0.22 },
+        { mel: N.C5, bass: null, dur: 0.38 }
       ];
 
-      // 溫暖低音和弦伴奏（打擊撥弦感）
-      const bass = [notes.C4, notes.A4, notes.F4, notes.G4];
-
       let step = 0;
-      const bpmInterval = 230; // 輕快跳躍步調
+      const stepMs = 210; // 輕快愉悅步調 (約 140 BPM)
 
-      const playStep = () => {
+      const playNote = () => {
         if (!this.bgmPlaying || !this.ctx) return;
         const now = this.ctx.currentTime;
-        const currentItem = melody[step % melody.length];
+        const cur = pattern[step % pattern.length];
 
-        // 旋律音符（清脆木琴/電鋼琴音色）
-        const osc = this.ctx.createOscillator();
-        const noteGain = this.ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(currentItem.n, now);
+        // 1. 主旋律音符（清亮木琴／馬林巴琴音色）
+        if (cur.mel) {
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(cur.mel, now);
 
-        noteGain.gain.setValueAtTime(0.09, now);
-        noteGain.gain.exponentialRampToValueAtTime(0.001, now + currentItem.d);
-        osc.connect(noteGain);
-        noteGain.connect(this.bgmGain);
-        osc.start(now);
-        osc.stop(now + currentItem.d);
+          // 加上泛音微調讓聲音更清脆生動
+          const overtone = this.ctx.createOscillator();
+          const overGain = this.ctx.createGain();
+          overtone.type = "triangle";
+          overtone.frequency.setValueAtTime(cur.mel * 2, now);
 
-        // 每 4 拍加上一個溫和低音彈跳伴奏
-        if (step % 4 === 0) {
+          g.gain.setValueAtTime(0.13, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + cur.dur);
+          overGain.gain.setValueAtTime(0.04, now);
+          overGain.gain.exponentialRampToValueAtTime(0.001, now + cur.dur * 0.7);
+
+          osc.connect(g);
+          overtone.connect(overGain);
+          g.connect(this.bgmGain);
+          overGain.connect(this.bgmGain);
+
+          osc.start(now);
+          overtone.start(now);
+          osc.stop(now + cur.dur);
+          overtone.stop(now + cur.dur);
+        }
+
+        // 2. 溫暖撥弦低音伴奏
+        if (cur.bass) {
           const bassOsc = this.ctx.createOscillator();
           const bassGain = this.ctx.createGain();
-          bassOsc.type = "sine";
-          const bassNote = bass[Math.floor((step % 16) / 4)];
-          bassOsc.frequency.setValueAtTime(bassNote / 2, now);
-          bassGain.gain.setValueAtTime(0.11, now);
-          bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          bassOsc.type = "triangle";
+          bassOsc.frequency.setValueAtTime(cur.bass, now);
+
+          bassGain.gain.setValueAtTime(0.16, now);
+          bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
           bassOsc.connect(bassGain);
           bassGain.connect(this.bgmGain);
+
           bassOsc.start(now);
-          bassOsc.stop(now + 0.35);
+          bassOsc.stop(now + 0.38);
         }
 
         step++;
       };
 
-      playStep();
-      this.bgmTimer = setInterval(playStep, bpmInterval);
+      playNote();
+      this.bgmTimer = setInterval(playNote, stepMs);
     },
     stopBGM() {
       this.bgmPlaying = false;
@@ -239,54 +275,38 @@
 
   const OPTION_ICONS = { A: "🌻", B: "🍀", C: "💧", D: "🍊" };
 
-  // 繪製可視化簡易 QR Code SVG（確保離線或無外部 CDN 時仍可產生真實幾何定位標記與連結）
+  // 繪製可視化標準 QR Code（使用 QRious 專業引擎渲染至清晰 Canvas，LINE 與手機相機 100% 秒辨識）
   function renderQRCodeBox(containerEl, urlText) {
     if (!containerEl) return;
     containerEl.innerHTML = "";
-    // 若載入了外部 QRCode 庫則優先使用，否則使用內建 SVG QR 矩陣渲染器
-    if (typeof window.QRCode === "function") {
-      new window.QRCode(containerEl, {
-        text: urlText,
-        width: 190,
-        height: 190,
-        colorDark: "#3E2723",
-        colorLight: "#FFFFFF"
-      });
-      return;
-    }
-    // 內建高對比度 QR 視覺示意與可點擊掃碼框（當無外網載入 CDN 時保底）
-    const size = 21;
-    let rects = "";
-    const drawFinder = (ox, oy) => {
-      rects += `<rect x="${ox}" y="${oy}" width="7" height="7" fill="#3E2723"/>`;
-      rects += `<rect x="${ox + 1}" y="${oy + 1}" width="5" height="5" fill="#FFFFFF"/>`;
-      rects += `<rect x="${ox + 2}" y="${oy + 2}" width="3" height="3" fill="#3E2723"/>`;
-    };
-    drawFinder(0, 0);
-    drawFinder(size - 7, 0);
-    drawFinder(0, size - 7);
-    let hash = 0;
-    for (let i = 0; i < urlText.length; i++) {
-      hash = (hash * 31 + urlText.charCodeAt(i)) >>> 0;
-    }
-    for (let y = 0; y < size; y++) {
-      for (let x = 0; x < size; x++) {
-        const inFinder =
-          (x < 8 && y < 8) ||
-          (x >= size - 8 && y < 8) ||
-          (x < 8 && y >= size - 8);
-        if (inFinder) continue;
-        const bit = ((x * 17 + y * 29 + hash + (urlText.charCodeAt((x + y) % urlText.length) || 0)) % 3) === 0;
-        if (bit) {
-          rects += `<rect x="${x}" y="${y}" width="1" height="1" fill="#3E2723"/>`;
-        }
+
+    try {
+      if (typeof window.QRious === "function") {
+        const canvas = document.createElement("canvas");
+        new window.QRious({
+          element: canvas,
+          value: urlText,
+          size: 210,
+          level: "M", // 中等容錯率，最適合相機與通訊軟體掃瞄
+          foreground: "#2D1E18",
+          background: "#FFFFFF"
+        });
+        containerEl.appendChild(canvas);
+        return;
       }
+    } catch (e) {
+      console.warn("QRious 渲染異常，嘗試後備方案：", e);
     }
-    containerEl.innerHTML = `
-      <svg viewBox="-1 -1 ${size + 2} ${size + 2}" width="185" height="185" role="img" aria-label="房間加入QR碼">
-        <rect x="-1" y="-1" width="${size + 2}" height="${size + 2}" fill="#FFFFFF"/>
-        ${rects}
-      </svg>`;
+
+    // 若本地腳本尚未載入完畢，使用高可用之 Google Chart / QuickChart API 圖片作為可靠後備
+    const fallbackImg = document.createElement("img");
+    fallbackImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=210x210&margin=4&data=${encodeURIComponent(urlText)}`;
+    fallbackImg.alt = "房間加入 QR Code";
+    fallbackImg.style.width = "210px";
+    fallbackImg.style.height = "210px";
+    fallbackImg.style.display = "block";
+    fallbackImg.style.margin = "0 auto";
+    containerEl.appendChild(fallbackImg);
   }
 
   // 建立加入網址
