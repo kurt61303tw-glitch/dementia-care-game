@@ -243,7 +243,6 @@
     student: {
       roomCode: "",
       token: "",
-      rid: "",
       participantId: "",
       nickname: "",
       roomState: null
@@ -313,7 +312,7 @@
   const OFFICIAL_ONLINE_BASE = "https://kurt61303tw-glitch.github.io/dementia-care-game/";
 
   // 建立加入網址（若本機測試，自動採用公開線上網址，確保任何外部手機掃碼皆可正確連入）
-  function buildJoinUrl(roomCode, token, cloudId = null) {
+  function buildJoinUrl(roomCode, token) {
     let base = syncEngine.cloudConfig.customPublicUrl;
     if (!base) {
       const loc = window.location;
@@ -323,8 +322,7 @@
         base = loc.href.split("?")[0];
       }
     }
-    const ridParam = cloudId ? `&rid=${encodeURIComponent(cloudId)}` : "";
-    return `${base}?room=${encodeURIComponent(roomCode)}&token=${encodeURIComponent(token)}${ridParam}`;
+    return `${base}?room=${encodeURIComponent(roomCode)}&token=${encodeURIComponent(token)}`;
   }
 
   // 主畫面渲染調度
@@ -831,7 +829,7 @@
   function renderHostLobbyView(root) {
     const st = AppState.host.roomState;
     if (!st) return;
-    const joinUrl = buildJoinUrl(st.roomCode, st.token, st.cloudId);
+    const joinUrl = buildJoinUrl(st.roomCode, st.token);
     const participants = Object.values(st.participants || {});
 
     root.innerHTML = `
@@ -1024,7 +1022,7 @@
     const participantCount = Object.keys(st.participants || {}).length;
     const dist = computeDistribution(st, q.id);
     const risk = RISK_LABELS[q.riskLevel] || RISK_LABELS.green;
-    const joinUrl = buildJoinUrl(st.roomCode, st.token, st.cloudId);
+    const joinUrl = buildJoinUrl(st.roomCode, st.token);
 
     root.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
@@ -1301,6 +1299,17 @@
           </button>
           <button class="wood-btn" id="btn-stu-cancel">返回首頁</button>
         </div>
+
+        <!-- 3A：連線指引與一鍵外開 Safari / Chrome 備援 -->
+        <div id="stu-browser-hint" style="background:#FFF9C4; border:1.5px dashed #F57F17; border-radius:10px; padding:12px; margin-top:16px; font-size:0.88rem; color:#E65100;">
+          <div><strong>💡 手機連線小提醒（3A 雙軌規範）：</strong></div>
+          <div style="margin-top:4px; line-height:1.5;">
+            若您使用 <strong>LINE 內建瀏覽器</strong> 掃描，建議點擊右上角「<strong>⋯</strong>」選擇「<strong>以預設瀏覽器／Safari／Chrome 開啟</strong>」，連線與即時作答將更加即時順暢！
+          </div>
+          <div style="margin-top:8px;">
+            <button class="wood-btn" id="btn-copy-join-link" style="font-size:0.82rem; padding:4px 10px;">📋 複製本頁加入連結</button>
+          </div>
+        </div>
       </div>
     `;
 
@@ -1308,6 +1317,14 @@
       AppState.view = "HOME";
       renderApp();
     };
+
+    const copyJoinBtn = document.getElementById("btn-copy-join-link");
+    if (copyJoinBtn) {
+      copyJoinBtn.onclick = () => {
+        navigator.clipboard?.writeText(window.location.href);
+        alert("已複製本頁加入連結！可直接貼在 Safari 或 Chrome 開啟。");
+      };
+    }
 
     document.getElementById("btn-stu-do-join").onclick = async () => {
       const btn = document.getElementById("btn-stu-do-join");
@@ -1329,13 +1346,11 @@
           } catch (e) {}
         }
 
-        const ridToUse = (code === AppState.student.roomCode) ? (AppState.student.rid || null) : null;
         const { state, participantId } = await syncEngine.joinRoom(
           code,
           AppState.student.token,
           nick,
-          existingPid,
-          ridToUse
+          existingPid
         );
         AppState.student.roomCode = code;
         AppState.student.nickname = nick;
@@ -1834,15 +1849,13 @@
       };
     }
 
-    // 檢查網址是否帶有 ?room=XXXXXX&token=YYYY&rid=ZZZZ（掃描 QR Code 自動跳轉學員加入畫面）
+    // 檢查網址是否帶有 ?room=XXXXXX&token=YYYY（掃描 QR Code 自動跳轉學員加入畫面）
     const params = new URLSearchParams(window.location.search);
     const roomParam = params.get("room");
     const tokenParam = params.get("token");
-    const ridParam = params.get("rid");
     if (roomParam) {
       AppState.student.roomCode = roomParam.trim().toUpperCase();
       AppState.student.token = tokenParam ? tokenParam.trim() : "";
-      if (ridParam) AppState.student.rid = ridParam.trim();
       AppState.view = "STUDENT_JOIN";
     }
 
