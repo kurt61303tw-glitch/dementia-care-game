@@ -157,46 +157,65 @@ class CareRoomSyncEngine {
     return state;
   }
 
-  // 跨裝置雲端廣播狀態
+  // 跨裝置雲端廣播狀態（保證本地瞬發，雲端非同步安全發布，絕不卡死 UI）
   async saveState(roomCode, state) {
     state.seq = (state.seq || 0) + 1;
     state.updatedAt = Date.now();
     this.lastSeq = state.seq;
 
-    // 1. 本地儲存與同機廣播
+    // 1. 本地儲存與同機廣播（0 延遲，保證大螢幕立即進入大廳）
     const key = this.getStorageKey(roomCode);
     localStorage.setItem(key, JSON.stringify(state));
     if (this.bc) {
-      this.bc.postMessage({ roomCode, state });
+      try {
+        this.bc.postMessage({ roomCode, state });
+      } catch (e) {}
     }
+    this.notifyListeners(state);
 
-    // 2. 透過公開即時中繼通道發布（免開帳號，跨手機即時生效）
+    // 2. 透過公開即時中繼通道發布（帶超時保護的非同步發布，絕不阻塞 UI 渲染）
     const topic = this.getRelayTopic(roomCode);
+    this.postToRelayAsync(topic, state);
+
+    // 3. 若有設定 Firebase 專案亦非同步保存
+    if (this.cloudConfig.firebaseDbUrl && this.cloudConfig.firebaseDbUrl.startsWith("https://")) {
+      this.postToFirebaseAsync(roomCode, state);
+    }
+  }
+
+  // 雲端中繼通道非同步安全發布（帶 2.5 秒超時自動放棄保護）
+  async postToRelayAsync(topic, state) {
     try {
+      const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 2500) : null;
       await fetch(`https://ntfy.sh/${topic}`, {
         method: "POST",
         headers: {
           "Title": "ROOM_UPDATE",
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(state)
+        body: JSON.stringify(state),
+        signal: controller ? controller.signal : undefined
       });
+      if (timeoutId) clearTimeout(timeoutId);
     } catch (e) {
-      console.warn("Relay post warning:", e);
+      console.warn("Relay post warning:", e.message || e);
     }
+  }
 
-    // 3. 若有設定 Firebase 專案亦同步保存
-    if (this.cloudConfig.firebaseDbUrl && this.cloudConfig.firebaseDbUrl.startsWith("https://")) {
-      try {
-        await fetch(`${this.cloudConfig.firebaseDbUrl}/care_rooms/${roomCode}.json`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(state)
-        }).catch((e) => {});
-      } catch (err) {}
-    }
-
-    this.notifyListeners(state);
+  // Firebase 非同步保存
+  async postToFirebaseAsync(roomCode, state) {
+    try {
+      const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 2500) : null;
+      await fetch(`${this.cloudConfig.firebaseDbUrl}/care_rooms/${roomCode}.json`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(state),
+        signal: controller ? controller.signal : undefined
+      });
+      if (timeoutId) clearTimeout(timeoutId);
+    } catch (err) {}
   }
 
   // 讀取最新房間狀態（雲端中繼通道優先）
@@ -204,12 +223,17 @@ class CareRoomSyncEngine {
     if (!roomCode) return null;
     const cleanCode = roomCode.toUpperCase();
 
-    // 1. 優先從公開雲端即時中繼通道讀取最新快照（強制 no-store 杜絕行動裝置快取）
+    // 1. 優先從公開雲端即時中繼通道讀取最新快照（強制 no-store 杜絕行動裝置快取，帶 3 秒超時保護）
     const topic = this.getRelayTopic(cleanCode);
     try {
+      const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 3000) : null;
       const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=3h`, {
-        cache: "no-store"
+        cache: "no-store",
+        signal: controller ? controller.signal : undefined
       });
+      if (timeoutId) clearTimeout(timeoutId);
+
       if (res.ok) {
         const text = await res.text();
         const lines = text.trim().split("\n").filter(Boolean);
@@ -227,15 +251,19 @@ class CareRoomSyncEngine {
         }
       }
     } catch (netErr) {
-      console.warn("雲端中繼讀取異常，降級嘗試本機快取：", netErr);
+      console.warn("雲端中繼讀取異常，降級嘗試本機快取：", netErr.message || netErr);
     }
 
     // 2. 次選 Firebase（若有設定）
     if (this.cloudConfig.firebaseDbUrl && this.cloudConfig.firebaseDbUrl.startsWith("https://")) {
       try {
+        const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+        const timeoutId = controller ? setTimeout(() => controller.abort(), 3000) : null;
         const fres = await fetch(`${this.cloudConfig.firebaseDbUrl}/care_rooms/${cleanCode}.json`, {
-          cache: "no-store"
+          cache: "no-store",
+          signal: controller ? controller.signal : undefined
         });
+        if (timeoutId) clearTimeout(timeoutId);
         if (fres.ok) {
           const fbState = await fres.json();
           if (fbState && fbState.roomCode === cleanCode) {

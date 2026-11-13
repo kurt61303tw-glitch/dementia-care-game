@@ -503,7 +503,7 @@
         const themeId = btn.getAttribute("data-theme");
         const selEl = document.getElementById(themeId === "theme1" ? "select-unit-t1" : "select-unit-t2");
         const unitFilter = selEl ? selEl.value : "ALL";
-        await startHostLobby(themeId, unitFilter);
+        await startHostLobby(themeId, unitFilter, btn);
       };
     });
   }
@@ -788,21 +788,42 @@
   }
 
   // ==================== 3. 師長開房模式：等候室與控場 (4B + 5A + 8A) ====================
-  async function startHostLobby(themeId, unitFilter) {
-    const pool = getPublishedQuestions(themeId, unitFilter);
-    if (!pool.length) {
-      alert("所選範圍無已審定題目。");
-      return;
+  async function startHostLobby(themeId, unitFilter, btn = null) {
+    const originalBtnHtml = btn ? btn.innerHTML : "";
+    if (btn) {
+      btn.disabled = true;
+      btn.style.opacity = "0.75";
+      btn.innerHTML = "⏳ 正在建立遊戲室……";
     }
-    const questionIds = pool.map((q) => q.id);
-    const roomState = await syncEngine.createRoom({
-      themeId,
-      unitFilter,
-      questionIds
-    });
-    AppState.host.roomState = roomState;
-    AppState.view = "HOST_LOBBY";
-    renderApp();
+    try {
+      const pool = getPublishedQuestions(themeId, unitFilter);
+      if (!pool.length) {
+        alert("所選範圍無已審定題目。");
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+          btn.innerHTML = originalBtnHtml;
+        }
+        return;
+      }
+      const questionIds = pool.map((q) => q.id);
+      const roomState = await syncEngine.createRoom({
+        themeId,
+        unitFilter,
+        questionIds
+      });
+      AppState.host.roomState = roomState;
+      AppState.view = "HOST_LOBBY";
+      renderApp();
+    } catch (err) {
+      console.error("開房異常：", err);
+      alert("開房失敗：" + (err.message || "未知原因，請重新整理後再試一次！"));
+      if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.innerHTML = originalBtnHtml;
+      }
+    }
   }
 
   function renderHostLobbyView(root) {
