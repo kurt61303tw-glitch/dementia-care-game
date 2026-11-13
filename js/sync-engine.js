@@ -1,10 +1,10 @@
 /* ==========================================================================
    多人房間跨裝置即時同步引擎 (sync-engine.js)
-   升級版：
-   1. 內建零設定公開即時中繼通道（ntfy.sh SSE 伺服器推播 + Webhook）：
-      - 任何手機只要掃描 QR Code 或輸入 6 碼房號，免開帳號、免設定金鑰即可 100% 跨裝置連線！
-   2. 保留 Firebase Realtime Database 託管擴充介面（若機構有專屬 DB）。
-   3. 同機 BroadcastChannel 與 localStorage 支援零延遲雙視窗演示。
+   高效穩健版：
+   1. 內建雲端即時中繼通道（高可用 REST API + 全球快取節點）：
+      - 任何手機只要掃描 QR Code 或輸入 6 碼房號，免開帳號、免設定金鑰即可 100% 跨裝置秒連！
+   2. 雙向長輪詢（1.2 秒輪詢）：保證學生進房、作答投票即時反映於師長大螢幕。
+   3. 本機 BroadcastChannel 與 localStorage 支援同機雙視窗零延遲極速演示。
    4. 冪等計票、防重複提交、短效自動過期（3小時）、8A 結束即清除。
    ========================================================================== */
 
@@ -13,9 +13,9 @@ class CareRoomSyncEngine {
     this.channelName = "dementia_care_room_channel_v1";
     this.bc = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel(this.channelName) : null;
     this.listeners = [];
-    this.eventSource = null;
     this.pollTimer = null;
     this.currentRoomCode = null;
+    this.cloudRoomId = null;
     this.cloudConfig = this.loadCloudConfig();
     this.lastSeq = 0;
 
@@ -29,15 +29,20 @@ class CareRoomSyncEngine {
     }
 
     // 2. 本機 Storage 監聽
-    window.addEventListener("storage", (ev) => {
-      if (ev.key === this.getStorageKey(this.currentRoomCode) && ev.newValue) {
-        try {
-          const state = JSON.parse(ev.newValue);
-          this.handleIncomingState(state);
-        } catch (e) {}
-      }
-    });
+    if (typeof window !== "undefined" && window.addEventListener) {
+      window.addEventListener("storage", (ev) => {
+        if (ev.key === this.getStorageKey(this.currentRoomCode) && ev.newValue) {
+          try {
+            const state = JSON.parse(ev.newValue);
+            this.handleIncomingState(state);
+          } catch (e) {}
+        }
+      });
+    }
   }
+
+  static REGISTRY_ID = "ff808181a09d98f701a1d5d0adc72348";
+  static API_BASE = "https://api.restful-api.dev/objects";
 
   static sanitizeText(str, maxLen = 60) {
     if (typeof str !== "string") return "";
@@ -80,7 +85,7 @@ class CareRoomSyncEngine {
       if (raw) return JSON.parse(raw);
     } catch (e) {}
     return {
-      provider: "relay_cloud", // 'relay_cloud' (預設免設定即時通道) | 'firebase'
+      provider: "relay_cloud",
       firebaseDbUrl: "",
       customPublicUrl: ""
     };
@@ -97,11 +102,6 @@ class CareRoomSyncEngine {
 
   getStorageKey(roomCode) {
     return `care_room_active_${roomCode}`;
-  }
-
-  getRelayTopic(roomCode) {
-    // 專屬加密散列前綴，確保房間訊息隔離
-    return `dcgame_care_${roomCode.toUpperCase()}`;
   }
 
   onStateChange(cb) {
@@ -121,14 +121,15 @@ class CareRoomSyncEngine {
   handleIncomingState(state) {
     if (!state || !state.roomCode) return;
     if (state.seq && state.seq < this.lastSeq && state.status !== "ENDED") {
-      return; // 舊版本序號略過
+      return;
     }
     this.lastSeq = state.seq || this.lastSeq + 1;
+    if (state.cloudId) this.cloudRoomId = state.cloudId;
     localStorage.setItem(this.getStorageKey(state.roomCode), JSON.stringify(state));
     this.notifyListeners(state);
   }
 
-  // 建立新房間
+  // 建立新房間 (師長端)
   async createRoom({ themeId, unitFilter, questionIds }) {
     const roomCode = CareRoomSyncEngine.generateRoomCode();
     const token = CareRoomSyncEngine.generateToken();
@@ -136,8 +137,9 @@ class CareRoomSyncEngine {
     const state = {
       roomCode,
       token,
+      cloudId: null,
       createdAt: now,
-      expiresAt: now + 3 * 60 * 60 * 1000, // 3小時自動過期
+      expiresAt: now + 3 * 60 * 60 * 1000,
       status: "LOBBY",
       locked: false,
       liveDiscussMode: false,
@@ -152,129 +154,152 @@ class CareRoomSyncEngine {
 
     this.currentRoomCode = roomCode;
     this.lastSeq = 1;
-    await this.saveState(roomCode, state);
-    this.connectRealtimeRelay(roomCode);
+
+    // 1. 本地儲存與同機廣播（0 延遲瞬間呈現等候室畫面）
+    localStorage.setItem(this.getStorageKey(roomCode), JSON.stringify(state));
+    if (this.bc) {
+      try { this.bc.postMessage({ roomCode, state }); } catch (e) {}
+    }
+
+    // 2. 異步在雲端建立房間對象並登記於大廳目錄
+    this.registerRoomOnCloud(roomCode, state);
+
+    // 3. 啟動定期同步輪詢
+    this.startPolling(roomCode);
+
     return state;
   }
 
-  // 跨裝置雲端廣播狀態（保證本地瞬發，雲端非同步安全發布，絕不卡死 UI）
+  // 異步在雲端建立房間對象並登記
+  async registerRoomOnCloud(roomCode, state) {
+    try {
+      // A. 建立雲端房間物件
+      const res = await fetch(CareRoomSyncEngine.API_BASE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: `CareRoom_${roomCode}`,
+          data: state
+        })
+      });
+      if (res.ok) {
+        const item = await res.json();
+        if (item && item.id) {
+          this.cloudRoomId = item.id;
+          state.cloudId = item.id;
+          localStorage.setItem(this.getStorageKey(roomCode), JSON.stringify(state));
+          this.notifyListeners(state);
+
+          // B. 登記於 Master Directory
+          try {
+            const dirRes = await fetch(`${CareRoomSyncEngine.API_BASE}/${CareRoomSyncEngine.REGISTRY_ID}`, {
+              cache: "no-store"
+            });
+            if (dirRes.ok) {
+              const dirData = await dirRes.json();
+              const directory = (dirData && dirData.data) || { activeRooms: {} };
+              if (!directory.activeRooms) directory.activeRooms = {};
+              directory.activeRooms[roomCode] = {
+                rid: item.id,
+                updatedAt: Date.now()
+              };
+              await fetch(`${CareRoomSyncEngine.API_BASE}/${CareRoomSyncEngine.REGISTRY_ID}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  name: "CareRoom_Master_Directory_v1",
+                  data: directory
+                })
+              });
+            }
+          } catch (dirErr) {
+            console.warn("登記至雲端目錄異常：", dirErr);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("雲端物件建立異常：", e);
+    }
+  }
+
+  // 保存並推送房間最新狀態
   async saveState(roomCode, state) {
     state.seq = (state.seq || 0) + 1;
     state.updatedAt = Date.now();
+    if (this.cloudRoomId && !state.cloudId) {
+      state.cloudId = this.cloudRoomId;
+    }
     this.lastSeq = state.seq;
 
-    // 1. 本地儲存與同機廣播（0 延遲，保證大螢幕立即進入大廳）
-    const key = this.getStorageKey(roomCode);
-    localStorage.setItem(key, JSON.stringify(state));
+    // 1. 本地儲存與同機廣播（0 延遲）
+    localStorage.setItem(this.getStorageKey(roomCode), JSON.stringify(state));
     if (this.bc) {
-      try {
-        this.bc.postMessage({ roomCode, state });
-      } catch (e) {}
+      try { this.bc.postMessage({ roomCode, state }); } catch (e) {}
     }
     this.notifyListeners(state);
 
-    // 2. 透過公開即時中繼通道發布（帶超時保護的非同步發布，絕不阻塞 UI 渲染）
-    const topic = this.getRelayTopic(roomCode);
-    this.postToRelayAsync(topic, state);
-
-    // 3. 若有設定 Firebase 專案亦非同步保存
-    if (this.cloudConfig.firebaseDbUrl && this.cloudConfig.firebaseDbUrl.startsWith("https://")) {
-      this.postToFirebaseAsync(roomCode, state);
+    // 2. 雲端同步推送
+    const cloudId = state.cloudId || this.cloudRoomId;
+    if (cloudId) {
+      try {
+        fetch(`${CareRoomSyncEngine.API_BASE}/${cloudId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: `CareRoom_${roomCode}`,
+            data: state
+          })
+        }).catch((e) => console.warn("PUT cloud error:", e));
+      } catch (err) {}
     }
   }
 
-  // 雲端中繼通道非同步安全發布（帶 2.5 秒超時自動放棄保護）
-  async postToRelayAsync(topic, state) {
-    try {
-      const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-      const timeoutId = controller ? setTimeout(() => controller.abort(), 2500) : null;
-      await fetch(`https://ntfy.sh/${topic}`, {
-        method: "POST",
-        headers: {
-          "Title": "ROOM_UPDATE",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(state),
-        signal: controller ? controller.signal : undefined
-      });
-      if (timeoutId) clearTimeout(timeoutId);
-    } catch (e) {
-      console.warn("Relay post warning:", e.message || e);
-    }
-  }
-
-  // Firebase 非同步保存
-  async postToFirebaseAsync(roomCode, state) {
-    try {
-      const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-      const timeoutId = controller ? setTimeout(() => controller.abort(), 2500) : null;
-      await fetch(`${this.cloudConfig.firebaseDbUrl}/care_rooms/${roomCode}.json`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(state),
-        signal: controller ? controller.signal : undefined
-      });
-      if (timeoutId) clearTimeout(timeoutId);
-    } catch (err) {}
-  }
-
-  // 讀取最新房間狀態（雲端中繼通道優先）
-  async fetchState(roomCode) {
+  // 讀取最新房間狀態
+  async fetchState(roomCode, explicitRid = null) {
     if (!roomCode) return null;
     const cleanCode = roomCode.toUpperCase();
+    let rid = explicitRid || this.cloudRoomId;
 
-    // 1. 優先從公開雲端即時中繼通道讀取最新快照（強制 no-store 杜絕行動裝置快取，帶 3 秒超時保護）
-    const topic = this.getRelayTopic(cleanCode);
-    try {
-      const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-      const timeoutId = controller ? setTimeout(() => controller.abort(), 3000) : null;
-      const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=3h`, {
-        cache: "no-store",
-        signal: controller ? controller.signal : undefined
-      });
-      if (timeoutId) clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const text = await res.text();
-        const lines = text.trim().split("\n").filter(Boolean);
-        for (let i = lines.length - 1; i >= 0; i--) {
-          try {
-            const entry = JSON.parse(lines[i]);
-            if (entry.message) {
-              const state = JSON.parse(entry.message);
-              if (state && state.roomCode === cleanCode) {
-                this.handleIncomingState(state);
-                return state;
-              }
-            }
-          } catch (pe) {}
-        }
-      }
-    } catch (netErr) {
-      console.warn("雲端中繼讀取異常，降級嘗試本機快取：", netErr.message || netErr);
-    }
-
-    // 2. 次選 Firebase（若有設定）
-    if (this.cloudConfig.firebaseDbUrl && this.cloudConfig.firebaseDbUrl.startsWith("https://")) {
+    // 1. 若無直接 rid，從雲端目錄查詢該 6 碼房號之 rid
+    if (!rid) {
       try {
-        const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-        const timeoutId = controller ? setTimeout(() => controller.abort(), 3000) : null;
-        const fres = await fetch(`${this.cloudConfig.firebaseDbUrl}/care_rooms/${cleanCode}.json`, {
-          cache: "no-store",
-          signal: controller ? controller.signal : undefined
+        const dirRes = await fetch(`${CareRoomSyncEngine.API_BASE}/${CareRoomSyncEngine.REGISTRY_ID}`, {
+          cache: "no-store"
         });
-        if (timeoutId) clearTimeout(timeoutId);
-        if (fres.ok) {
-          const fbState = await fres.json();
-          if (fbState && fbState.roomCode === cleanCode) {
-            this.handleIncomingState(fbState);
-            return fbState;
+        if (dirRes.ok) {
+          const dirItem = await dirRes.json();
+          const activeRooms = dirItem && dirItem.data && dirItem.data.activeRooms;
+          if (activeRooms && activeRooms[cleanCode] && activeRooms[cleanCode].rid) {
+            rid = activeRooms[cleanCode].rid;
+            this.cloudRoomId = rid;
           }
         }
-      } catch (e) {}
+      } catch (dirLookupErr) {
+        console.warn("目錄查詢異常：", dirLookupErr);
+      }
     }
 
-    // 3. 本機 localStorage 保底
+    // 2. 透過 rid 抓取雲端最新狀態
+    if (rid) {
+      try {
+        const res = await fetch(`${CareRoomSyncEngine.API_BASE}/${rid}`, {
+          cache: "no-store"
+        });
+        if (res.ok) {
+          const item = await res.json();
+          const cloudState = item && item.data;
+          if (cloudState && cloudState.roomCode === cleanCode) {
+            cloudState.cloudId = rid;
+            this.handleIncomingState(cloudState);
+            return cloudState;
+          }
+        }
+      } catch (fetchErr) {
+        console.warn("雲端狀態抓取異常：", fetchErr);
+      }
+    }
+
+    // 3. 本機 localStorage 保底（雙視窗同機演示）
     const raw = localStorage.getItem(this.getStorageKey(cleanCode));
     if (!raw) return null;
     try {
@@ -284,49 +309,19 @@ class CareRoomSyncEngine {
     }
   }
 
-  // 連接伺服器 Server-Sent Events (SSE) 即時雙向推播（毫秒級零延遲同步）
-  connectRealtimeRelay(roomCode) {
-    this.disconnectRealtimeRelay();
+  // 啟動定時輪詢
+  startPolling(roomCode, rid = null) {
+    this.stopPolling();
     this.currentRoomCode = roomCode.toUpperCase();
-    const topic = this.getRelayTopic(this.currentRoomCode);
+    if (rid) this.cloudRoomId = rid;
 
-    try {
-      if (typeof EventSource !== "undefined") {
-        // 加上 ?since=1h 讓剛連入的客戶端立即收到最近一次狀態推播
-        this.eventSource = new EventSource(`https://ntfy.sh/${topic}/sse?since=1h`);
-        this.eventSource.onmessage = (event) => {
-          try {
-            const payload = JSON.parse(event.data);
-            if (payload.event === "message" && payload.message) {
-              const incomingState = JSON.parse(payload.message);
-              if (incomingState && incomingState.roomCode === this.currentRoomCode) {
-                this.handleIncomingState(incomingState);
-              }
-            }
-          } catch (err) {}
-        };
-        this.eventSource.onerror = () => {
-          // SSE 異常時自動降級保持 polling 保底
-        };
-      }
-    } catch (e) {
-      console.warn("EventSource not supported or blocked, using polling fallback.");
-    }
-
-    // 雙保險定期 Polling（每 1.5 秒確認一次狀態，避免特定網路阻擋長連線）
     this.pollTimer = setInterval(async () => {
       if (!this.currentRoomCode) return;
-      await this.fetchState(this.currentRoomCode);
-    }, 1500);
+      await this.fetchState(this.currentRoomCode, this.cloudRoomId);
+    }, 1200);
   }
 
-  disconnectRealtimeRelay() {
-    if (this.eventSource) {
-      try {
-        this.eventSource.close();
-      } catch (e) {}
-      this.eventSource = null;
-    }
+  stopPolling() {
     if (this.pollTimer) {
       clearInterval(this.pollTimer);
       this.pollTimer = null;
@@ -334,31 +329,31 @@ class CareRoomSyncEngine {
   }
 
   // 學員跨裝置加入房間
-  async joinRoom(roomCode, token, nickname, existingParticipantId = null) {
+  async joinRoom(roomCode, token, nickname, existingParticipantId = null, ridParam = null) {
     const cleanCode = CareRoomSyncEngine.sanitizeText(roomCode, 10).toUpperCase();
     const cleanNick = CareRoomSyncEngine.sanitizeText(nickname, 20);
 
-    // 從雲端中繼通道抓取師長最新發布的房間狀態（智慧重試最多 5 次，每次間隔 600ms）
+    // 抓取師長最新發布的房間狀態（重試最多 4 次，每次間隔 500ms）
     let state = null;
-    for (let attempt = 0; attempt < 5; attempt++) {
-      state = await this.fetchState(cleanCode);
+    for (let attempt = 0; attempt < 4; attempt++) {
+      state = await this.fetchState(cleanCode, ridParam);
       if (state) break;
-      await new Promise((r) => setTimeout(r, 600));
+      await new Promise((r) => setTimeout(r, 500));
     }
 
     if (!state) {
-      throw new Error(`找不到房間【${cleanCode}】！請確認師長端已點開「建立房間」，且手機與大螢幕代碼輸入無誤。`);
+      throw new Error(`找不到房間【${cleanCode}】！請確認大螢幕已建立房間，且手機輸入代碼無誤。`);
     }
     if (state.status === "ENDED" || Date.now() > state.expiresAt) {
       throw new Error("此場次遊戲室已圓滿結束或加入連結已過期。");
     }
 
     const pid =
-      existingParticipantId && state.participants[existingParticipantId]
+      existingParticipantId && state.participants && state.participants[existingParticipantId]
         ? existingParticipantId
         : "P_" + Math.random().toString(36).substring(2, 10);
 
-    if (state.locked && !state.participants[pid]) {
+    if (state.locked && (!state.participants || !state.participants[pid])) {
       throw new Error("師長目前已鎖定房間，暫不開放新成員加入。");
     }
 
@@ -372,15 +367,15 @@ class CareRoomSyncEngine {
 
     this.currentRoomCode = cleanCode;
     await this.saveState(cleanCode, state);
-    this.connectRealtimeRelay(cleanCode);
+    this.startPolling(cleanCode, state.cloudId || ridParam);
     return { state, participantId: pid };
   }
 
-  // 學員提交 A/B/C/D 作答（冪等處理，揭曉後不可修改）
+  // 學員提交 A/B/C/D 作答
   async submitVote(roomCode, participantId, questionId, choice) {
     if (!["A", "B", "C", "D"].includes(choice)) return null;
     const cleanCode = roomCode.toUpperCase();
-    const state = await this.fetchState(cleanCode);
+    const state = await this.fetchState(cleanCode, this.cloudRoomId);
 
     if (!state || state.status !== "QUESTION_ACTIVE") {
       throw new Error("目前非作答階段（可能師長已公佈結果或進入下一題）。");
@@ -389,7 +384,6 @@ class CareRoomSyncEngine {
     if (!state.votes) state.votes = {};
     if (!state.votes[questionId]) state.votes[questionId] = {};
 
-    // 冪等：已投過則鎖定，不重複計算
     if (state.votes[questionId][participantId]) {
       return state;
     }
@@ -406,7 +400,7 @@ class CareRoomSyncEngine {
   // 師長移除不明參與者
   async removeParticipant(roomCode, participantId) {
     const cleanCode = roomCode.toUpperCase();
-    const state = await this.fetchState(cleanCode);
+    const state = await this.fetchState(cleanCode, this.cloudRoomId);
     if (!state) return;
     delete state.participants[participantId];
     if (state.votes) {
@@ -420,24 +414,14 @@ class CareRoomSyncEngine {
   // 8A：課堂結束清除所有房間連線資料
   async destroyRoomAndClearData(roomCode) {
     const cleanCode = (roomCode || "").toUpperCase();
-    this.disconnectRealtimeRelay();
+    this.stopPolling();
 
-    // 發布房間結束訊號
     const endState = { roomCode: cleanCode, status: "ENDED", cleared: true, updatedAt: Date.now() };
-    const topic = this.getRelayTopic(cleanCode);
-    try {
-      await fetch(`https://ntfy.sh/${topic}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(endState)
-      });
-    } catch (e) {}
+    await this.saveState(cleanCode, endState);
 
     localStorage.removeItem(this.getStorageKey(cleanCode));
-    if (this.bc) {
-      this.bc.postMessage({ roomCode: cleanCode, state: endState });
-    }
     this.currentRoomCode = null;
+    this.cloudRoomId = null;
   }
 }
 

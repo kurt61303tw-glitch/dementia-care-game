@@ -243,6 +243,7 @@
     student: {
       roomCode: "",
       token: "",
+      rid: "",
       participantId: "",
       nickname: "",
       roomState: null
@@ -312,7 +313,7 @@
   const OFFICIAL_ONLINE_BASE = "https://kurt61303tw-glitch.github.io/dementia-care-game/";
 
   // 建立加入網址（若本機測試，自動採用公開線上網址，確保任何外部手機掃碼皆可正確連入）
-  function buildJoinUrl(roomCode, token) {
+  function buildJoinUrl(roomCode, token, cloudId = null) {
     let base = syncEngine.cloudConfig.customPublicUrl;
     if (!base) {
       const loc = window.location;
@@ -322,7 +323,8 @@
         base = loc.href.split("?")[0];
       }
     }
-    return `${base}?room=${encodeURIComponent(roomCode)}&token=${encodeURIComponent(token)}`;
+    const ridParam = cloudId ? `&rid=${encodeURIComponent(cloudId)}` : "";
+    return `${base}?room=${encodeURIComponent(roomCode)}&token=${encodeURIComponent(token)}${ridParam}`;
   }
 
   // 主畫面渲染調度
@@ -829,7 +831,7 @@
   function renderHostLobbyView(root) {
     const st = AppState.host.roomState;
     if (!st) return;
-    const joinUrl = buildJoinUrl(st.roomCode, st.token);
+    const joinUrl = buildJoinUrl(st.roomCode, st.token, st.cloudId);
     const participants = Object.values(st.participants || {});
 
     root.innerHTML = `
@@ -1022,7 +1024,7 @@
     const participantCount = Object.keys(st.participants || {}).length;
     const dist = computeDistribution(st, q.id);
     const risk = RISK_LABELS[q.riskLevel] || RISK_LABELS.green;
-    const joinUrl = buildJoinUrl(st.roomCode, st.token);
+    const joinUrl = buildJoinUrl(st.roomCode, st.token, st.cloudId);
 
     root.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
@@ -1327,11 +1329,13 @@
           } catch (e) {}
         }
 
+        const ridToUse = (code === AppState.student.roomCode) ? (AppState.student.rid || null) : null;
         const { state, participantId } = await syncEngine.joinRoom(
           code,
           AppState.student.token,
           nick,
-          existingPid
+          existingPid,
+          ridToUse
         );
         AppState.student.roomCode = code;
         AppState.student.nickname = nick;
@@ -1830,13 +1834,15 @@
       };
     }
 
-    // 檢查網址是否帶有 ?room=XXXXXX&token=YYYY（掃描 QR Code 自動跳轉學員加入畫面）
+    // 檢查網址是否帶有 ?room=XXXXXX&token=YYYY&rid=ZZZZ（掃描 QR Code 自動跳轉學員加入畫面）
     const params = new URLSearchParams(window.location.search);
     const roomParam = params.get("room");
     const tokenParam = params.get("token");
+    const ridParam = params.get("rid");
     if (roomParam) {
       AppState.student.roomCode = roomParam.trim().toUpperCase();
       AppState.student.token = tokenParam ? tokenParam.trim() : "";
+      if (ridParam) AppState.student.rid = ridParam.trim();
       AppState.view = "STUDENT_JOIN";
     }
 
