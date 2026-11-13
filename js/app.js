@@ -41,17 +41,27 @@
     });
   }
 
-  // 溫馨音效合成器（Web Audio API，預設需使用者手勢且支援一鍵靜音）
+  // 溫馨音效與輕鬆振奮背景音樂引擎（Web Audio API）
   const SoundFX = {
     muted: false,
     ctx: null,
+    bgmPlaying: false,
+    bgmTimer: null,
+    bgmGain: null,
+    initCtx() {
+      if (!this.ctx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) this.ctx = new AudioCtx();
+      }
+      if (this.ctx && this.ctx.state === "suspended") {
+        this.ctx.resume();
+      }
+    },
     play(type) {
       if (this.muted) return;
       try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        if (!this.ctx) this.ctx = new AudioCtx();
-        if (this.ctx.state === "suspended") this.ctx.resume();
+        this.initCtx();
+        if (!this.ctx) return;
 
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
@@ -77,6 +87,100 @@
           osc.stop(now + 0.45);
         }
       } catch (e) {}
+    },
+    // 輕鬆愉快、振奮人心的 Q 版木琴/馬林巴琴風格背景音樂
+    toggleBGM() {
+      this.initCtx();
+      if (!this.ctx) return false;
+
+      if (this.bgmPlaying) {
+        this.stopBGM();
+        return false;
+      } else {
+        this.startBGM();
+        return true;
+      }
+    },
+    startBGM() {
+      if (!this.ctx) return;
+      this.stopBGM();
+      this.bgmPlaying = true;
+
+      // 主控音量節點（避免過大聲，預設舒適輕快背景音量）
+      this.bgmGain = this.ctx.createGain();
+      this.bgmGain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+      this.bgmGain.connect(this.ctx.destination);
+
+      // C大調輕快振奮音階（頻率 Hz）
+      const notes = {
+        C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
+        C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99
+      };
+
+      // 陽光輕快、跳躍有活力的 16 拍旋律組
+      const melody = [
+        { n: notes.C5, d: 0.22 }, { n: notes.G4, d: 0.18 }, { n: notes.A4, d: 0.22 }, { n: notes.C5, d: 0.35 },
+        { n: notes.D5, d: 0.22 }, { n: notes.E5, d: 0.28 }, { n: notes.D5, d: 0.22 }, { n: notes.C5, d: 0.40 },
+        { n: notes.E5, d: 0.22 }, { n: notes.G5, d: 0.24 }, { n: notes.E5, d: 0.22 }, { n: notes.D5, d: 0.32 },
+        { n: notes.C5, d: 0.22 }, { n: notes.A4, d: 0.22 }, { n: notes.G4, d: 0.22 }, { n: notes.C5, d: 0.45 }
+      ];
+
+      // 溫暖低音和弦伴奏（打擊撥弦感）
+      const bass = [notes.C4, notes.A4, notes.F4, notes.G4];
+
+      let step = 0;
+      const bpmInterval = 230; // 輕快跳躍步調
+
+      const playStep = () => {
+        if (!this.bgmPlaying || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const currentItem = melody[step % melody.length];
+
+        // 旋律音符（清脆木琴/電鋼琴音色）
+        const osc = this.ctx.createOscillator();
+        const noteGain = this.ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(currentItem.n, now);
+
+        noteGain.gain.setValueAtTime(0.09, now);
+        noteGain.gain.exponentialRampToValueAtTime(0.001, now + currentItem.d);
+        osc.connect(noteGain);
+        noteGain.connect(this.bgmGain);
+        osc.start(now);
+        osc.stop(now + currentItem.d);
+
+        // 每 4 拍加上一個溫和低音彈跳伴奏
+        if (step % 4 === 0) {
+          const bassOsc = this.ctx.createOscillator();
+          const bassGain = this.ctx.createGain();
+          bassOsc.type = "sine";
+          const bassNote = bass[Math.floor((step % 16) / 4)];
+          bassOsc.frequency.setValueAtTime(bassNote / 2, now);
+          bassGain.gain.setValueAtTime(0.11, now);
+          bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          bassOsc.connect(bassGain);
+          bassGain.connect(this.bgmGain);
+          bassOsc.start(now);
+          bassOsc.stop(now + 0.35);
+        }
+
+        step++;
+      };
+
+      playStep();
+      this.bgmTimer = setInterval(playStep, bpmInterval);
+    },
+    stopBGM() {
+      this.bgmPlaying = false;
+      if (this.bgmTimer) {
+        clearInterval(this.bgmTimer);
+        this.bgmTimer = null;
+      }
+      if (this.bgmGain && this.ctx) {
+        try {
+          this.bgmGain.gain.setValueAtTime(0, this.ctx.currentTime);
+        } catch (e) {}
+      }
     }
   };
 
@@ -1656,8 +1760,17 @@
     if (btnMute) {
       btnMute.onclick = () => {
         SoundFX.muted = !SoundFX.muted;
-        btnMute.textContent = SoundFX.muted ? "🔇 音效已關" : "🔊 溫馨音效";
+        btnMute.textContent = SoundFX.muted ? "🔇 點擊靜音" : "🔊 點擊音效";
         btnMute.classList.toggle("active-toggle", SoundFX.muted);
+      };
+    }
+
+    const btnBgm = document.getElementById("btn-toggle-bgm");
+    if (btnBgm) {
+      btnBgm.onclick = () => {
+        const isPlaying = SoundFX.toggleBGM();
+        btnBgm.textContent = isPlaying ? "⏸️ 暫停背景音樂" : "🎵 輕鬆背景音樂";
+        btnBgm.classList.toggle("active-toggle", isPlaying);
       };
     }
 
