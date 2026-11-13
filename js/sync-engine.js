@@ -173,20 +173,22 @@ class CareRoomSyncEngine {
     // 2. 透過公開即時中繼通道發布（免開帳號，跨手機即時生效）
     const topic = this.getRelayTopic(roomCode);
     try {
-      fetch(`https://ntfy.sh/${topic}`, {
+      await fetch(`https://ntfy.sh/${topic}`, {
         method: "POST",
         headers: {
           "Title": "ROOM_UPDATE",
           "Content-Type": "application/json"
         },
         body: JSON.stringify(state)
-      }).catch((e) => console.warn("Relay post warning:", e));
-    } catch (e) {}
+      });
+    } catch (e) {
+      console.warn("Relay post warning:", e);
+    }
 
     // 3. 若有設定 Firebase 專案亦同步保存
     if (this.cloudConfig.firebaseDbUrl && this.cloudConfig.firebaseDbUrl.startsWith("https://")) {
       try {
-        fetch(`${this.cloudConfig.firebaseDbUrl}/care_rooms/${roomCode}.json`, {
+        await fetch(`${this.cloudConfig.firebaseDbUrl}/care_rooms/${roomCode}.json`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(state)
@@ -202,10 +204,12 @@ class CareRoomSyncEngine {
     if (!roomCode) return null;
     const cleanCode = roomCode.toUpperCase();
 
-    // 1. 優先從公開雲端即時中繼通道讀取最新快照
+    // 1. 優先從公開雲端即時中繼通道讀取最新快照（強制 no-store 杜絕行動裝置快取）
     const topic = this.getRelayTopic(cleanCode);
     try {
-      const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=3h`);
+      const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=3h`, {
+        cache: "no-store"
+      });
       if (res.ok) {
         const text = await res.text();
         const lines = text.trim().split("\n").filter(Boolean);
@@ -229,7 +233,9 @@ class CareRoomSyncEngine {
     // 2. 次選 Firebase（若有設定）
     if (this.cloudConfig.firebaseDbUrl && this.cloudConfig.firebaseDbUrl.startsWith("https://")) {
       try {
-        const fres = await fetch(`${this.cloudConfig.firebaseDbUrl}/care_rooms/${cleanCode}.json`);
+        const fres = await fetch(`${this.cloudConfig.firebaseDbUrl}/care_rooms/${cleanCode}.json`, {
+          cache: "no-store"
+        });
         if (fres.ok) {
           const fbState = await fres.json();
           if (fbState && fbState.roomCode === cleanCode) {
@@ -258,7 +264,8 @@ class CareRoomSyncEngine {
 
     try {
       if (typeof EventSource !== "undefined") {
-        this.eventSource = new EventSource(`https://ntfy.sh/${topic}/sse`);
+        // 加上 ?since=1h 讓剛連入的客戶端立即收到最近一次狀態推播
+        this.eventSource = new EventSource(`https://ntfy.sh/${topic}/sse?since=1h`);
         this.eventSource.onmessage = (event) => {
           try {
             const payload = JSON.parse(event.data);
@@ -303,17 +310,16 @@ class CareRoomSyncEngine {
     const cleanCode = CareRoomSyncEngine.sanitizeText(roomCode, 10).toUpperCase();
     const cleanNick = CareRoomSyncEngine.sanitizeText(nickname, 20);
 
-    // 從雲端中繼通道抓取師長最新發布的房間狀態
-    let state = await this.fetchState(cleanCode);
-
-    if (!state) {
-      // 容錯重試一次（避免網路延遲）
-      await new Promise((r) => setTimeout(r, 600));
+    // 從雲端中繼通道抓取師長最新發布的房間狀態（智慧重試最多 5 次，每次間隔 600ms）
+    let state = null;
+    for (let attempt = 0; attempt < 5; attempt++) {
       state = await this.fetchState(cleanCode);
+      if (state) break;
+      await new Promise((r) => setTimeout(r, 600));
     }
 
     if (!state) {
-      throw new Error(`找不到房間【${cleanCode}】！請確認師長端大螢幕已點開「建立房間」，且代碼輸入無誤。`);
+      throw new Error(`找不到房間【${cleanCode}】！請確認師長端已點開「建立房間」，且手機與大螢幕代碼輸入無誤。`);
     }
     if (state.status === "ENDED" || Date.now() > state.expiresAt) {
       throw new Error("此場次遊戲室已圓滿結束或加入連結已過期。");
@@ -338,6 +344,9 @@ class CareRoomSyncEngine {
 
     this.currentRoomCode = cleanCode;
     await this.saveState(cleanCode, state);
+    this.connectRealtimeRelay(cleanCode);
+    return { state, participantId: pid };
+  }
     this.connectRealtimeRelay(cleanCode);
     return { state, participantId: pid };
   }

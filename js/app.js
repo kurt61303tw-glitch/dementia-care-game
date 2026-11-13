@@ -309,9 +309,19 @@
     containerEl.appendChild(fallbackImg);
   }
 
-  // 建立加入網址
+  const OFFICIAL_ONLINE_BASE = "https://kurt61303tw-glitch.github.io/dementia-care-game/";
+
+  // 建立加入網址（若本機測試，自動採用公開線上網址，確保任何外部手機掃碼皆可正確連入）
   function buildJoinUrl(roomCode, token) {
-    const base = syncEngine.cloudConfig.customPublicUrl || window.location.href.split("?")[0];
+    let base = syncEngine.cloudConfig.customPublicUrl;
+    if (!base) {
+      const loc = window.location;
+      if (loc.hostname === "localhost" || loc.hostname === "127.0.0.1" || loc.protocol === "file:") {
+        base = OFFICIAL_ONLINE_BASE;
+      } else {
+        base = loc.href.split("?")[0];
+      }
+    }
     return `${base}?room=${encodeURIComponent(roomCode)}&token=${encodeURIComponent(token)}`;
   }
 
@@ -1277,12 +1287,15 @@
     };
 
     document.getElementById("btn-stu-do-join").onclick = async () => {
+      const btn = document.getElementById("btn-stu-do-join");
       const code = document.getElementById("stu-room-code").value.trim().toUpperCase();
       const nick = document.getElementById("stu-nickname").value.trim() || "照護學員";
       if (!code) {
         alert("請輸入 6 碼房間代碼！");
         return;
       }
+      btn.disabled = true;
+      btn.innerHTML = "⏳ 正在跨裝置連線至大螢幕房間...";
       try {
         // 檢查 60 秒內同房斷線重連 session
         const savedSessionRaw = sessionStorage.getItem(`stu_session_${code}`);
@@ -1311,7 +1324,9 @@
         AppState.view = "STUDENT_GAME";
         renderApp();
       } catch (err) {
-        alert(err.message || "加入房間失敗");
+        alert(err.message || "加入房間失敗，請確認代碼無誤或請師長先建立房間！");
+        btn.disabled = false;
+        btn.innerHTML = "🚪 進入陽光交誼廳等候室";
       }
     };
   }
