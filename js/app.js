@@ -41,13 +41,42 @@
     });
   }
 
-  // 溫馨音效與輕鬆振奮背景音樂引擎（Web Audio API）
+  // 溫馨音效與輕鬆振奮背景音樂引擎（Web Audio API，支援即時音量微調與記憶）
   const SoundFX = {
     muted: false,
+    volume: 0.7, // 預設 70%
     ctx: null,
     bgmPlaying: false,
     bgmTimer: null,
     bgmGain: null,
+
+    init() {
+      try {
+        const saved = localStorage.getItem("care_game_master_volume_v1");
+        if (saved !== null) {
+          const v = parseFloat(saved);
+          if (!isNaN(v) && v >= 0 && v <= 1) {
+            this.volume = v;
+          }
+        }
+      } catch (e) {}
+    },
+
+    setVolume(val) {
+      this.volume = Math.max(0, Math.min(1, val));
+      try {
+        localStorage.setItem("care_game_master_volume_v1", this.volume.toString());
+      } catch (e) {}
+
+      // 若背景音樂正在播放，即時調整目前 gain
+      if (this.bgmGain && this.ctx) {
+        try {
+          const effectiveBgmGain = this.volume <= 0.001 ? 0.0001 : 0.22 * this.volume;
+          this.bgmGain.gain.setValueAtTime(effectiveBgmGain, this.ctx.currentTime);
+        } catch (e) {}
+      }
+    },
+
     initCtx() {
       if (!this.ctx) {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -57,8 +86,9 @@
         this.ctx.resume();
       }
     },
+
     play(type) {
-      if (this.muted) return;
+      if (this.muted || this.volume <= 0.001) return;
       try {
         this.initCtx();
         if (!this.ctx) return;
@@ -69,10 +99,13 @@
         osc.connect(gain);
         gain.connect(this.ctx.destination);
 
+        const baseGain = type === "click" ? 0.08 : 0.1;
+        const targetGain = Math.max(0.001, baseGain * this.volume);
+
         if (type === "click") {
           osc.type = "sine";
           osc.frequency.setValueAtTime(520, now);
-          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.setValueAtTime(targetGain, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
           osc.start(now);
           osc.stop(now + 0.08);
@@ -81,13 +114,14 @@
           osc.frequency.setValueAtTime(440, now);
           osc.frequency.setValueAtTime(554.37, now + 0.1);
           osc.frequency.setValueAtTime(659.25, now + 0.2);
-          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.setValueAtTime(targetGain, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
           osc.start(now);
           osc.stop(now + 0.45);
         }
       } catch (e) {}
     },
+
     // 輕鬆愉快、讓人振奮的長照小遊戲互動背景音樂（雙聲道和弦＋木琴跳躍主旋律）
     toggleBGM() {
       this.initCtx();
@@ -104,15 +138,17 @@
         return true;
       }
     },
+
     startBGM() {
       this.initCtx();
       if (!this.ctx) return;
       this.stopBGM();
       this.bgmPlaying = true;
 
-      // 主控音量節點（設為適當的 0.18，清晰可聞又不刺耳）
+      // 主控音量節點（依目前 volume 乘上基準增益，即時可調）
       this.bgmGain = this.ctx.createGain();
-      this.bgmGain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+      const currentEffectiveGain = this.volume <= 0.001 ? 0.0001 : 0.22 * this.volume;
+      this.bgmGain.gain.setValueAtTime(currentEffectiveGain, this.ctx.currentTime);
       this.bgmGain.connect(this.ctx.destination);
 
       // 音階頻率定義 (Hz)
@@ -1807,6 +1843,54 @@
         btnBgm.textContent = isPlaying ? "⏸️ 暫停背景音樂" : "🎵 輕鬆背景音樂";
         btnBgm.classList.toggle("active-toggle", isPlaying);
       };
+    }
+
+    // 初始化聲音大小調節控制器 (滑桿 + 微調步進按鍵)
+    SoundFX.init();
+    const inputVol = document.getElementById("input-volume");
+    const labelVol = document.getElementById("label-volume");
+    const btnVolDown = document.getElementById("btn-vol-down");
+    const btnVolUp = document.getElementById("btn-vol-up");
+
+    const updateVolumeUI = (pct) => {
+      if (inputVol) inputVol.value = pct;
+      if (labelVol) {
+        labelVol.textContent = pct === 0 ? "靜音" : `${pct}%`;
+      }
+      if (btnVolDown) {
+        btnVolDown.textContent = pct === 0 ? "🔇" : pct < 40 ? "🔈" : "🔉";
+      }
+    };
+
+    const initialPct = Math.round(SoundFX.volume * 100);
+    updateVolumeUI(initialPct);
+
+    if (inputVol) {
+      inputVol.addEventListener("input", (e) => {
+        const val = parseInt(e.target.value, 10);
+        SoundFX.setVolume(val / 100);
+        updateVolumeUI(val);
+      });
+    }
+
+    if (btnVolDown) {
+      btnVolDown.addEventListener("click", () => {
+        const currentPct = Math.round(SoundFX.volume * 100);
+        const nextPct = Math.max(0, currentPct - 10);
+        SoundFX.setVolume(nextPct / 100);
+        updateVolumeUI(nextPct);
+        SoundFX.play("click");
+      });
+    }
+
+    if (btnVolUp) {
+      btnVolUp.addEventListener("click", () => {
+        const currentPct = Math.round(SoundFX.volume * 100);
+        const nextPct = Math.min(100, currentPct + 10);
+        SoundFX.setVolume(nextPct / 100);
+        updateVolumeUI(nextPct);
+        SoundFX.play("click");
+      });
     }
 
     // 檢查網址是否帶有 ?room=XXXXXX&token=YYYY（掃描 QR Code 自動跳轉學員加入畫面）
