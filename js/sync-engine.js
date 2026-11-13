@@ -1,7 +1,7 @@
 /* ==========================================================================
    多人房間跨裝置即時同步引擎 (sync-engine.js)
    落實冠樺拍板之雙軌決策：
-   - 1A (自適應雙中繼 + 支援自訂 Firebase 4B)
+   - 1A (MQTT 雙軌高可用 WSS 通道 + 支援 Firebase 4B)
    - 2A (純匿名、課堂結束即焚 8A 醫療長照隱私規範)
    - 3A (手機 3 秒未連上自動提示外開 Safari/Chrome，大螢幕保留大字投影/舉牌模式)
    ========================================================================== */
@@ -17,15 +17,16 @@ class CareRoomSyncEngine {
     this.mqttClient = null;
     this.mqttConnected = false;
     this.isHost = false;
+    this.pendingJoin = null;
 
-    // 雙軌公共 Broker 輪替集（免登入、無日額度限制、TLS 443/WSS 標準端點）
+    // 雙軌公共 Broker 輪替集（標準 WSS TLS 443/8084/8884 端點）
     this.mqttBrokers = [
-      { host: "broker.emqx.io", port: 8084, path: "/mqtt", name: "EMQX" },
-      { host: "broker.hivemq.com", port: 8884, path: "/mqtt", name: "HiveMQ" }
+      { url: "wss://broker.emqx.io:8084/mqtt", name: "EMQX" },
+      { url: "wss://broker.hivemq.com:8884/mqtt", name: "HiveMQ" }
     ];
     this.currentBrokerIdx = 0;
 
-    // 1. 同機廣播接收（雙分頁 0 延遲同步）
+    // 1. 同機廣播接收（雙視窗 0 延遲極速演示）
     if (this.bc) {
       this.bc.onmessage = (ev) => {
         if (ev.data && ev.data.roomCode === this.currentRoomCode) {
@@ -45,7 +46,7 @@ class CareRoomSyncEngine {
         }
       });
 
-      // 3. LINE / Safari 前背景切換自動重新拉取 (visibilitychange)
+      // 3. LINE / Safari 前背景切換自動重連 (visibilitychange)
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible" && this.currentRoomCode) {
           if (!this.mqttConnected) {
@@ -158,7 +159,7 @@ class CareRoomSyncEngine {
 
   initMqtt(roomCode, isHost = false) {
     if (typeof window === "undefined" || !window.Paho || !window.Paho.MQTT) {
-      console.warn("Paho MQTT 模組尚未載入，採用本機/Firebase 模式");
+      console.warn("Paho MQTT 尚未載入，採用本機/Firebase 模式");
       return;
     }
 
@@ -174,15 +175,15 @@ class CareRoomSyncEngine {
     }
 
     const broker = this.mqttBrokers[this.currentBrokerIdx % this.mqttBrokers.length];
-    const clientId = "care_" + (isHost ? "host_" : "stu_") + Math.random().toString(36).substring(2, 9);
+    const clientId = "care_" + (isHost ? "h_" : "s_") + Math.random().toString(36).substring(2, 9);
 
     try {
-      this.mqttClient = new window.Paho.MQTT.Client(broker.host, broker.port, broker.path, clientId);
+      // 關鍵：使用 2 個參數傳入完整 wss:// URI，確保走 TLS 443 安全連線
+      this.mqttClient = new window.Paho.MQTT.Client(broker.url, clientId);
 
       this.mqttClient.onConnectionLost = (resp) => {
         this.mqttConnected = false;
-        console.warn(`MQTT 離線 (${broker.name})：`, resp.errorMessage);
-        // 切換下一個 Broker 嘗試重連
+        console.warn(`[SyncEngine] MQTT 離線 (${broker.name})：`, resp.errorMessage);
         setTimeout(() => {
           if (this.currentRoomCode === cleanCode) {
             this.currentBrokerIdx++;
@@ -197,7 +198,7 @@ class CareRoomSyncEngine {
         try {
           const data = JSON.parse(payloadStr);
 
-          // 1. 收到房間最新狀態廣播 (所有端點)
+          // 1. 收到房間狀態最新廣播 (所有裝置)
           if (topic === `cargame/room/${cleanCode}/state`) {
             this.handleIncomingState(data);
           }
@@ -206,32 +207,38 @@ class CareRoomSyncEngine {
             this.handleHostAction(cleanCode, data);
           }
         } catch (e) {
-          console.warn("MQTT 訊息解析異常：", e);
+          console.warn("MQTT 封包解析異常：", e);
         }
       };
 
       this.mqttClient.connect({
         useSSL: true,
-        timeout: 4,
+        mqttVersion: 4, // 關鍵：設定 MQTT 3.1.1 (標準 subprotocol 'mqtt')
+        timeout: 5,
         keepAliveInterval: 30,
         cleanSession: true,
         onSuccess: () => {
           this.mqttConnected = true;
-          console.log(`✅ 已連線至雲端即時通道 (${broker.name})，房間：${cleanCode}`);
+          console.log(`[SyncEngine] ✅ 已連線至雲端即時通道 (${broker.name})，房間：${cleanCode}`);
 
-          // 訂閱房間狀態（QoS 1）
+          // 訂閱房間狀態主題
           this.mqttClient.subscribe(`cargame/room/${cleanCode}/state`, { qos: 1 });
 
-          // 師長額外訂閱學員動作
+          // 師長端額外訂閱學員動作主題
           if (this.isHost) {
             this.mqttClient.subscribe(`cargame/room/${cleanCode}/actions`, { qos: 1 });
             const curState = this.getLocalState(cleanCode);
             if (curState) this.publishRoomState(cleanCode, curState);
+          } else {
+            // 學員端連線成功：若有待發送的加入動作，立即發送！
+            if (this.pendingJoin) {
+              this.sendJoinAction(cleanCode, this.pendingJoin.participantId, this.pendingJoin.nickname, this.pendingJoin.token);
+            }
           }
         },
         onFailure: (err) => {
           this.mqttConnected = false;
-          console.warn(`MQTT 連線失敗 (${broker.name})，切換備用中繼：`, err);
+          console.warn(`[SyncEngine] MQTT 連線失敗 (${broker.name})，切換備用中繼：`, err);
           this.currentBrokerIdx++;
           setTimeout(() => {
             if (this.currentRoomCode === cleanCode) {
@@ -242,6 +249,28 @@ class CareRoomSyncEngine {
       });
     } catch (err) {
       console.warn("MQTT 初始化失敗：", err);
+    }
+  }
+
+  // 學員發送加入動作
+  sendJoinAction(roomCode, participantId, nickname, token) {
+    if (!this.mqttClient || !this.mqttConnected) return;
+    try {
+      const msg = new window.Paho.MQTT.Message(
+        JSON.stringify({
+          type: "JOIN",
+          participantId,
+          nickname: nickname || "照護夥伴",
+          token: token || "",
+          timestamp: Date.now()
+        })
+      );
+      msg.destinationName = `cargame/room/${roomCode}/actions`;
+      msg.qos = 1;
+      this.mqttClient.send(msg);
+      console.log(`[SyncEngine] 已發送 JOIN 動作至 cargame/room/${roomCode}/actions`);
+    } catch (e) {
+      console.warn("發送 JOIN 動作異常：", e);
     }
   }
 
@@ -261,6 +290,7 @@ class CareRoomSyncEngine {
           joinedAt: curState.participants[pid] ? curState.participants[pid].joinedAt : Date.now(),
           lastSeen: Date.now()
         };
+        console.log(`[Host] 學員加入：${action.nickname} (${pid})，總人數：${Object.keys(curState.participants).length}`);
         await this.saveState(roomCode, curState);
       }
     } else if (action.type === "VOTE") {
@@ -274,6 +304,7 @@ class CareRoomSyncEngine {
             if (curState.participants && curState.participants[participantId]) {
               curState.participants[participantId].lastSeen = Date.now();
             }
+            console.log(`[Host] 收到投票：${participantId} 投 ${choice}`);
             await this.saveState(roomCode, curState);
           }
         }
@@ -281,7 +312,7 @@ class CareRoomSyncEngine {
     }
   }
 
-  // 發布房間狀態（Retained 訊息保證新進學員立刻收到）
+  // 發布房間最新狀態（Retained 訊息保證新加入者立即收到）
   publishRoomState(roomCode, state) {
     if (!this.mqttClient || !this.mqttConnected) return;
     try {
@@ -291,7 +322,7 @@ class CareRoomSyncEngine {
       msg.qos = 1;
       this.mqttClient.send(msg);
     } catch (e) {
-      console.warn("發布 MQTT 房間狀態異常：", e);
+      console.warn("發布 MQTT 狀態異常：", e);
     }
   }
 
@@ -322,7 +353,7 @@ class CareRoomSyncEngine {
     this.currentRoomCode = roomCode;
     this.lastSeq = 1;
 
-    // 1. 本地儲存與同機廣播（0 延遲瞬間呈現）
+    // 1. 本地儲存與同機廣播（0 延遲瞬間呈現等候室畫面）
     localStorage.setItem(this.getStorageKey(roomCode), JSON.stringify(state));
     if (this.bc) {
       try {
@@ -405,34 +436,31 @@ class CareRoomSyncEngine {
   // 學員跨裝置加入房間
   async joinRoom(roomCode, token, nickname, existingParticipantId = null) {
     const cleanCode = CareRoomSyncEngine.sanitizeText(roomCode, 10).toUpperCase();
-    const cleanNick = CareRoomSyncEngine.sanitizeText(nickname, 20);
+    const cleanNick = CareRoomSyncEngine.sanitizeText(nickname, 20) || "照護學員";
 
     this.currentRoomCode = cleanCode;
+    const pid = existingParticipantId || "P_" + Math.random().toString(36).substring(2, 10);
+    this.pendingJoin = { participantId: pid, nickname: cleanNick, token };
 
     // 啟動學員端 MQTT 連線
     this.initMqtt(cleanCode, false);
 
-    const pid = existingParticipantId || "P_" + Math.random().toString(36).substring(2, 10);
+    // 若連線已經就緒，立即發送；若尚未就緒，onSuccess 會自動發送
+    if (this.mqttConnected) {
+      this.sendJoinAction(cleanCode, pid, cleanNick, token);
+    }
 
-    // 發送 JOIN action 給師長大螢幕
-    const sendJoinAction = () => {
-      if (this.mqttClient && this.mqttConnected) {
-        try {
-          const msg = new window.Paho.MQTT.Message(
-            JSON.stringify({
-              type: "JOIN",
-              participantId: pid,
-              nickname: cleanNick || "照護夥伴",
-              token: token || "",
-              timestamp: Date.now()
-            })
-          );
-          msg.destinationName = `cargame/room/${cleanCode}/actions`;
-          msg.qos = 1;
-          this.mqttClient.send(msg);
-        } catch (e) {}
+    // 雙重保險：0.8s 與 1.8s 各補送一次
+    setTimeout(() => {
+      if (this.mqttConnected) {
+        this.sendJoinAction(cleanCode, pid, cleanNick, token);
       }
-    };
+    }, 800);
+    setTimeout(() => {
+      if (this.mqttConnected) {
+        this.sendJoinAction(cleanCode, pid, cleanNick, token);
+      }
+    }, 1800);
 
     // 嘗試拉取現有狀態
     let state = await this.fetchState(cleanCode);
@@ -445,17 +473,13 @@ class CareRoomSyncEngine {
       }
     }
 
-    // 發送加入動作通知大螢幕
-    sendJoinAction();
-    setTimeout(sendJoinAction, 1000);
-
     // 建立臨時狀態保底進入等候室
     if (!state) {
       state = {
         roomCode: cleanCode,
         status: "LOBBY",
         participants: {
-          [pid]: { id: pid, nickname: cleanNick || "照護夥伴", joinedAt: Date.now() }
+          [pid]: { id: pid, nickname: cleanNick, joinedAt: Date.now() }
         },
         votes: {},
         questionIds: [],
@@ -467,7 +491,7 @@ class CareRoomSyncEngine {
       if (!state.participants) state.participants = {};
       state.participants[pid] = {
         id: pid,
-        nickname: cleanNick || "照護夥伴",
+        nickname: cleanNick,
         joinedAt: Date.now()
       };
     }
