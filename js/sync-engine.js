@@ -347,9 +347,6 @@ class CareRoomSyncEngine {
     this.connectRealtimeRelay(cleanCode);
     return { state, participantId: pid };
   }
-    this.connectRealtimeRelay(cleanCode);
-    return { state, participantId: pid };
-  }
 
   // 學員提交 A/B/C/D 作答（冪等處理，揭曉後不可修改）
   async submitVote(roomCode, participantId, questionId, choice) {
