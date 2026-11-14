@@ -1089,12 +1089,18 @@
           ${renderDifficultyBadge(q.difficulty)}
           <span class="risk-badge ${risk.cls}">${risk.icon} ${risk.text}</span>
           <span style="margin-left:4px; font-weight:800; color:var(--wood-dark);">
-            【房號：${st.roomCode}】第 ${st.currentIndex + 1} / ${st.questionIds.length} 題｜在線學員：${participantCount} 人
+            【房號：${st.roomCode}】第 ${st.currentIndex + 1} / ${st.questionIds.length} 題｜在線：${participantCount} 人${st.locked ? "（🔒已鎖房）" : "（🟢開放中途加入）"}
           </span>
         </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <button class="wood-btn" id="btn-host-show-qr" style="background:#FFF9C4; font-weight:800; border:2px solid #F57F17; color:#E65100;">
+            📱 顯示入房 QR Code (中途可掃)
+          </button>
+          <button class="wood-btn ${st.locked ? "active-toggle" : ""}" id="btn-host-toggle-lock" title="點擊切換是否允許新學員中途加入">
+            ${st.locked ? "🔒 已鎖房（點擊開放）" : "🔓 開放中途加入"}
+          </button>
           <button class="wood-btn" id="btn-host-sim-student">📱 開啟學員模擬視窗</button>
-          <button class="wood-btn" id="btn-host-end-session">📊 結算本場次並匯出報告</button>
+          <button class="wood-btn" id="btn-host-end-session">📊 結算本場次</button>
         </div>
       </div>
 
@@ -1189,6 +1195,20 @@
           : ""
       }
     `;
+
+    const btnShowQr = document.getElementById("btn-host-show-qr");
+    if (btnShowQr) {
+      btnShowQr.onclick = () => openMidGameQrModal(st);
+    }
+
+    const btnLock = document.getElementById("btn-host-toggle-lock");
+    if (btnLock) {
+      btnLock.onclick = async () => {
+        st.locked = !st.locked;
+        await syncEngine.saveState(st.roomCode, st);
+        renderApp();
+      };
+    }
 
     const btnSim = document.getElementById("btn-host-sim-student");
     if (btnSim) {
@@ -1486,6 +1506,14 @@
       </div>
 
       <div class="question-card">
+        ${
+          st.currentIndex > 0 && !myVote
+            ? `
+          <div style="background:#E8F5E9; border:2px solid #81C784; border-radius:10px; padding:8px 14px; margin-bottom:12px; font-size:0.88rem; color:#1B5E20; font-weight:700; display:flex; align-items:center; gap:8px;">
+            <span>🟢 您已中途加入課堂！已為您自動同步至【第 ${st.currentIndex + 1} 題】${!isRevealed ? "，請直接點選下方選項作答！" : "（師長正在解析本題，即將進入下一題）"}</span>
+          </div>`
+            : ""
+        }
         <div class="question-stem">${q.stem}</div>
         <div class="options-grid">
           ${["A", "B", "C", "D"]
@@ -1514,11 +1542,13 @@
           ${
             !isRevealed
               ? myVote
-                ? `✅ 您已投出【選項 ${myVote}】！請等待師長揭曉全班 A/B/C/D 人數分佈与正確答案。`
+                ? `✅ 您已投出【選項 ${myVote}】！請等待師長揭曉全班 A/B/C/D 人數分佈與正確答案。`
                 : "👆 請點選上方 A、B、C、D 其中一個選項送出答案"
-              : myVote === q.correct
-              ? `🎉 答對了！正確答案正是【選項 ${q.correct}】`
-              : `💡 正確答案為【選項 ${q.correct}】（您剛才選了【${myVote || "未作答"}】）`
+              : myVote
+              ? myVote === q.correct
+                ? `🎉 答對了！正確答案正是【選項 ${q.correct}】`
+                : `💡 正確答案為【選項 ${q.correct}】（您剛才選了【${myVote}】）`
+              : `📢 師長正在帶動全班解析【選項 ${q.correct}】，下一題即將開始，請稍候！`
           }
         </div>
       </div>
@@ -1844,6 +1874,81 @@
     };
   }
 
+  // 課堂中途顯示加入 QR Code 專屬彈窗
+  function openMidGameQrModal(st) {
+    const modal = document.getElementById("modal-container");
+    if (!modal || !st) return;
+    modal.classList.remove("hidden");
+    const joinUrl = buildJoinUrl(st.roomCode, st.token);
+
+    modal.innerHTML = `
+      <div class="modal-window" style="max-width:520px; text-align:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h2 style="color:var(--wood-dark); font-size:1.35rem;">📱 學員中途加入遊戲室（隨掃隨進）</h2>
+          <button class="wood-btn" id="btn-close-midqr">✖ 關閉</button>
+        </div>
+
+        <div style="background:#E8F5E9; border:2px solid #81C784; border-radius:12px; padding:10px 14px; margin-bottom:14px; color:#1B5E20; font-size:0.92rem; font-weight:700;">
+          🟢 課堂進行中！新加入學員掃描後將「無縫同步進入當前第 ${st.currentIndex + 1} 題作答」！
+        </div>
+
+        <div class="qr-wooden-frame" style="padding:16px; margin:0 auto 16px; max-width:320px;">
+          <div id="midqr-container"></div>
+          <div style="font-size:0.9rem; color:var(--text-sub); margin-top:8px;">房間 6 碼安全代碼：</div>
+          <div class="room-code-pill" style="font-size:1.6rem; letter-spacing:4px;">${st.roomCode}</div>
+        </div>
+
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <button class="wood-btn primary" id="btn-midqr-copy">📋 複製學員加入連結</button>
+          <button class="wood-btn ${st.locked ? "active-toggle" : ""}" id="btn-midqr-toggle-lock">
+            ${st.locked ? "🔒 已鎖房（點擊開放）" : "🔓 開放中（點擊鎖房）"}
+          </button>
+        </div>
+      </div>
+    `;
+
+    const qrContainer = document.getElementById("midqr-container");
+    if (qrContainer) renderQRCodeBox(qrContainer, joinUrl);
+
+    document.getElementById("btn-close-midqr").onclick = () => {
+      modal.classList.add("hidden");
+    };
+
+    document.getElementById("btn-midqr-copy").onclick = () => {
+      navigator.clipboard?.writeText(joinUrl);
+      alert("已複製學員加入連結！可直接傳到 LINE 或通訊軟體。");
+    };
+
+    document.getElementById("btn-midqr-toggle-lock").onclick = async () => {
+      st.locked = !st.locked;
+      await syncEngine.saveState(st.roomCode, st);
+      openMidGameQrModal(st);
+    };
+  }
+
+  // 師長大螢幕輕量溫馨 Toast 提示（學員中途加入通知）
+  function showHostToast(message) {
+    let container = document.getElementById("care-toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "care-toast-container";
+      container.style.cssText = "position:fixed; top:20px; right:20px; z-index:99999; display:flex; flex-direction:column; gap:10px; pointer-events:none;";
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement("div");
+    toast.className = "wood-toast";
+    toast.style.cssText = "background:#FFF8E7; border:2px solid #8D6E63; border-radius:12px; padding:12px 18px; box-shadow:0 6px 20px rgba(0,0,0,0.18); font-weight:800; color:#3E2723; font-size:0.95rem; display:flex; align-items:center; gap:8px;";
+    toast.innerHTML = message;
+    container.appendChild(toast);
+    SoundFX.play("click");
+
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      toast.style.transition = "opacity 0.4s ease-out";
+      setTimeout(() => toast.remove(), 400);
+    }, 3800);
+  }
+
   // 初始化與監聽同步事件
   function init() {
     // 監聽房間狀態更新
@@ -1861,6 +1966,17 @@
       ) {
         AppState.student.roomState = newState;
         renderApp();
+      }
+    });
+
+    // 監聽學員新加入事件（中途加入在大螢幕跳出提示）
+    window.addEventListener("care_student_midjoin", (e) => {
+      const { nickname, total, midGame } = e.detail || {};
+      if (AppState.view === "HOST_GAME" || AppState.view === "HOST_LOBBY") {
+        showHostToast(`🌱 歡迎 <strong>${nickname}</strong> ${midGame ? "中途" : ""}加入課堂！（在線學員：${total} 人）`);
+        if (AppState.host.roomState) {
+          renderApp();
+        }
       }
     });
 

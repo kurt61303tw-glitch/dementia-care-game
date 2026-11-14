@@ -281,17 +281,40 @@ class CareRoomSyncEngine {
     if (!curState) return;
 
     if (action.type === "JOIN") {
+      if (curState.locked) {
+        console.warn(`[Host] 房間已鎖定，拒絕學員 ${action.nickname} (${action.participantId}) 中途加入`);
+        return;
+      }
       if (!curState.participants) curState.participants = {};
       const pid = action.participantId;
       if (pid) {
+        const isNew = !curState.participants[pid];
         curState.participants[pid] = {
           id: pid,
           nickname: action.nickname || "照護夥伴",
           joinedAt: curState.participants[pid] ? curState.participants[pid].joinedAt : Date.now(),
           lastSeen: Date.now()
         };
-        console.log(`[Host] 學員加入：${action.nickname} (${pid})，總人數：${Object.keys(curState.participants).length}`);
+        const totalCount = Object.keys(curState.participants).length;
+        console.log(`[Host] 學員${isNew ? '中途' : '重新'}加入：${action.nickname} (${pid})，總人數：${totalCount}`);
+        
+        // 觸發自訂事件，供大螢幕即時彈出「學員中途加入」Toast 提示
+        if (typeof window !== "undefined" && isNew) {
+          window.dispatchEvent(
+            new CustomEvent("care_student_midjoin", {
+              detail: {
+                nickname: action.nickname || "照護夥伴",
+                pid,
+                total: totalCount,
+                midGame: curState.status !== "LOBBY"
+              }
+            })
+          );
+        }
+
         await this.saveState(roomCode, curState);
+        // 關鍵：立刻透過 MQTT 發布最新房間狀態（包含當前題目與進度），確保中途加入的學員瞬間跟上
+        this.publishRoomState(roomCode, curState);
       }
     } else if (action.type === "VOTE") {
       if (curState.status === "QUESTION_ACTIVE") {
@@ -471,6 +494,10 @@ class CareRoomSyncEngine {
         state = this.getLocalState(cleanCode);
         if (state) break;
       }
+    }
+
+    if (state && state.locked) {
+      throw new Error("此房間師長已鎖定，暫不開放中途加入！若需加入請請師長於大螢幕點擊「解鎖」按鈕。");
     }
 
     // 建立臨時狀態保底進入等候室
