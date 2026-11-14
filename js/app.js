@@ -299,7 +299,8 @@
       token: "",
       participantId: "",
       nickname: "",
-      roomState: null
+      roomState: null,
+      lastRenderedKey: null // 記錄上次渲染的題號與狀態，換題時自動滾動至最頂端
     }
   };
 
@@ -833,9 +834,15 @@
           AppState.solo.selectedChoice = null;
           AppState.solo.revealed = false;
           renderApp();
+          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
         } else {
           AppState.view = "SOLO_SUMMARY";
           renderApp();
+          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
         }
       };
     }
@@ -1297,11 +1304,17 @@
           st.currentIndex++;
           st.status = "QUESTION_ACTIVE";
           await syncEngine.saveState(st.roomCode, st);
+          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
         } else {
           st.status = "ENDED";
           await syncEngine.saveState(st.roomCode, st);
           AppState.view = "HOST_SUMMARY";
           renderApp();
+          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
         }
       };
     }
@@ -1553,6 +1566,30 @@
     const dist = computeDistribution(st, q.id);
     const risk = RISK_LABELS[q.riskLevel] || RISK_LABELS.green;
 
+    // 當師長切換到下一題（或進入新題目作答），學員畫面自動平滑捲動至最頂端題目開始處
+    const currentQKey = `${st.currentIndex}_${st.status === "REVEALED" ? "REV" : "ACT"}`;
+    if (AppState.student.lastRenderedKey !== currentQKey) {
+      const prevKey = AppState.student.lastRenderedKey;
+      AppState.student.lastRenderedKey = currentQKey;
+
+      const isNewQuestion =
+        prevKey !== null &&
+        (!prevKey.startsWith(`${st.currentIndex}_`) ||
+          (prevKey.endsWith("_REV") && currentQKey.endsWith("_ACT")));
+
+      if (isNewQuestion || prevKey === null) {
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+            const mainStage = document.getElementById("app-stage");
+            if (mainStage) mainStage.scrollTop = 0;
+          }, 30);
+        });
+      }
+    }
+
     root.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
         <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
@@ -1564,7 +1601,12 @@
 
       <div class="question-card">
         ${
-          st.currentIndex > 0 && !myVote
+          !isRevealed && !myVote
+            ? `
+          <div style="background:#E8F5E9; border:2px solid #81C784; border-radius:10px; padding:8px 14px; margin-bottom:12px; font-size:0.88rem; color:#1B5E20; font-weight:700; display:flex; align-items:center; gap:8px;">
+            <span>🔔 第 ${st.currentIndex + 1} 題已開始！請先閱讀下方情境題幹，再點選 A、B、C、D 送出作答。</span>
+          </div>`
+            : st.currentIndex > 0 && !myVote
             ? `
           <div style="background:#E8F5E9; border:2px solid #81C784; border-radius:10px; padding:8px 14px; margin-bottom:12px; font-size:0.88rem; color:#1B5E20; font-weight:700; display:flex; align-items:center; gap:8px;">
             <span>🟢 您已中途加入課堂！已為您自動同步至【第 ${st.currentIndex + 1} 題】${!isRevealed ? "，請直接點選下方選項作答！" : "（師長正在解析本題，即將進入下一題）"}</span>
@@ -2164,8 +2206,27 @@
         AppState.view === "STUDENT_GAME" &&
         AppState.student.roomCode === newState.roomCode
       ) {
+        const oldState = AppState.student.roomState;
+        const isNextQuestion =
+          oldState &&
+          (newState.currentIndex !== oldState.currentIndex ||
+            (oldState.status === "REVEALED" && newState.status === "QUESTION_ACTIVE") ||
+            (oldState.status === "LOBBY" && newState.status === "QUESTION_ACTIVE"));
+
         AppState.student.roomState = newState;
         renderApp();
+
+        if (isNextQuestion) {
+          // 當師長每下一個題目，學員端立即自動平滑捲動至最頂部題目開始
+          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+          const mainStage = document.getElementById("app-stage");
+          if (mainStage) mainStage.scrollTop = 0;
+          try {
+            SoundFX.play("click");
+          } catch (e) {}
+        }
       }
     });
 
