@@ -6,6 +6,7 @@
 window.QUESTIONS_THEME_1 = [
   // ================= 單元 1：建立安全感與承接情緒（12題） =================
   {
+    difficulty: "basic",
     id: "T1-U1-01",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -37,6 +38,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U1-02",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -68,6 +70,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U1-03",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -99,6 +102,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U1-04",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -130,6 +134,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U1-05",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -161,6 +166,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U1-06",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -192,6 +198,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U1-07",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -223,6 +230,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U1-08",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -254,6 +262,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U1-09",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -285,6 +294,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U1-10",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -316,6 +326,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U1-11",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -347,6 +358,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U1-12",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -380,6 +392,7 @@ window.QUESTIONS_THEME_1 = [
 
   // ================= 單元 2：聽懂非語言訊息與環境調整（12題） =================
   {
+    difficulty: "basic",
     id: "T1-U2-01",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -411,6 +424,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U2-02",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -442,6 +456,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U2-03",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -473,6 +488,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U2-04",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -504,6 +520,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U2-05",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -535,6 +552,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U2-06",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -566,6 +584,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U2-07",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -597,6 +616,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U2-08",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -628,6 +648,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U2-09",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -659,6 +680,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U2-10",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -690,6 +712,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U2-11",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -721,6 +744,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U2-12",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -754,6 +778,7 @@ window.QUESTIONS_THEME_1 = [
 
   // ================= 單元 3：簡短肯定句與有限選擇（12題） =================
   {
+    difficulty: "basic",
     id: "T1-U3-01",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -785,6 +810,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U3-02",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -816,6 +842,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U3-03",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -847,6 +874,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U3-04",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -878,6 +906,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U3-05",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -909,6 +938,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U3-06",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -940,6 +970,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U3-07",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -971,6 +1002,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U3-08",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1002,6 +1034,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U3-09",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1033,6 +1066,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U3-10",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1064,6 +1098,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U3-11",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1095,6 +1130,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U3-12",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1128,6 +1164,7 @@ window.QUESTIONS_THEME_1 = [
 
   // ================= 單元 4：維護成人尊嚴與自主感（12題） =================
   {
+    difficulty: "basic",
     id: "T1-U4-01",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1159,6 +1196,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U4-02",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1190,6 +1228,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U4-03",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1221,6 +1260,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U4-04",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1252,6 +1292,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U4-05",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1283,6 +1324,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U4-06",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1314,6 +1356,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U4-07",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1345,6 +1388,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U4-08",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1376,6 +1420,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U4-09",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1407,6 +1452,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U4-10",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1438,6 +1484,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U4-11",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1469,6 +1516,7 @@ window.QUESTIONS_THEME_1 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T1-U4-12",
     themeId: "theme1",
     themeTitle: "長照失智長者的溝通方法與原則",
@@ -1498,6 +1546,350 @@ window.QUESTIONS_THEME_1 = [
     auditStatus: "published",
     auditTrail: { draft: true, clinical: true, education: true, sop: true, published: true },
     reviewDate: "2027-05-12"
+  }
+,
+  // ================= 高階臨床實戰進階題組 (🔥) =================
+{
+    "id": "T1-U1-ADV-01",
+    "themeId": "theme1",
+    "themeTitle": "長照失智長者的溝通方法與原則",
+    "unitId": "T1-U1",
+    "unitTitle": "單元一：建立安全感與承接情緒",
+    "difficulty": "advanced",
+    "scene": "lounge",
+    "riskLevel": "yellow",
+    "stem": "80歲罹患中度阿茲海默症合併被害妄想的周奶奶，傍晚在房間翻箱倒櫃、滿臉脹紅，將枕頭棉被摔在地上，對剛進門的照護員激動大喊：「我的十萬塊私房錢不見了！一定是被隔壁床戴眼鏡的那個女人偷走的，妳現在立刻去搜她的櫃子，不然我就叫我當律師的兒子來告你們！」此時第一線照護員最恰當的應對策略為何？",
+    "options": {
+      "A": "「周奶奶您別急，隔壁床確實常常走來走去很可疑，我現在立刻幫您去她櫃子搜搜看，幫您討回公道！」",
+      "B": "「周奶奶您先冷靜，機構有規定長輩身上不能放大量現金，您家屬上次來早就把貴重物品帶回家了，您房間根本不可能有十萬塊。」",
+      "C": "「奶奶十萬塊好多喔，真的好心疼！沒關係啦，錢再賺就有，我們先去吃晚餐，如果真的找不到，我請主任先包個紅包補給您好不好？」",
+      "D": "「周奶奶，這麼重要的一筆錢找不到了，換作是我一定也急壞了、非常慌張！來，我們先深呼吸坐下來喝口溫水。我記得您平常最信任這件有拉鍊的藍色外套暗袋，我們先從您的衣櫃跟抽屜一起仔細找找看，好嗎？」"
+    },
+    "correct": "D",
+    "optionReasons": {
+      "A": "看似順應長者，實則「強化了偷竊妄想」並將矛頭指向無辜室友，極易引發長者間嚴重的肢體衝突與法律糾紛，違反非藥物介入指引。",
+      "B": "講的雖然是機構客觀事實，但在長者急性焦慮時進行理性辯駁，等於直接指責長者「記錯/胡鬧」，會徹底摧毀信任感並引爆更激烈對抗。",
+      "C": "過早提出金錢補償或輕描淡寫說「再賺就有」，會讓長者感到被敷衍，甚至可能反咬懷疑「妳那麼急著賠我，是不是妳心虛偷的？」。",
+      "D": "正確！精準運用驗證溝通（Validation）：先承接「遺失重要財物之真實慌亂焦慮」，絕不涉入「隔壁床室友」的是非辯論，引導專注於檢查自身熟悉的隱密置物處，必要時啟動預備替代物或家屬視訊安撫。"
+    },
+    "corePrinciple": "接納慌亂情緒、不駁斥事實、不強化特定對象妄想，轉移至熟悉自尊處所共同搜尋。",
+    "sopReference": "機構BPSD非藥物處置指引：妄想與遺失懷疑之降焦安撫與替代支持標準流程。",
+    "redFlagAlert": "黃色風險題：注意長者情緒激動時的血壓變化與可能波及室友的人身安全防範。",
+    "source": "台大醫院失智共同照護中心臨床指引／WHO iSupport",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T1-U1-ADV-02",
+    "themeId": "theme1",
+    "themeTitle": "長照失智長者的溝通方法與原則",
+    "unitId": "T1-U1",
+    "unitTitle": "單元一：建立安全感與承接情緒",
+    "difficulty": "advanced",
+    "scene": "lounge",
+    "riskLevel": "red",
+    "stem": "76歲確診路易氏體失智症（DLB）的陳爺爺，傍晚驚恐指著窗簾旁的陰影大叫：「有兩個黑衣小偷拿繩子蹲在那裡要綁我！快報警拿棍子打他們！」爺爺全身發抖、雙手緊抓輪椅扶手。下列處置何者最符合神經精神臨床規範？",
+    "options": {
+      "A": "立即請護理師聯絡醫師，開立並肌肉注射高劑量典型抗精神病藥物（Haloperidol）予以強制鎮靜。",
+      "B": "順著爺爺的話拿起掃把對著空氣揮舞說：「爺爺您看，我拿棍子把小偷通通打跑了，您安全了！」",
+      "C": "站在陳爺爺身側同向視野，溫和堅定地握住他的手告知：「陳爺爺我看您很害怕，我在這裡陪您、保護您。」順手打開柔和主燈消除陰影並拉平窗簾，溫和引導轉移至明亮熱鬧的交誼廳。",
+      "D": "用力扳開爺爺的頭轉向窗簾大聲說：「陳爺爺您仔細看清楚，那是窗簾跟窗台影子，哪有小偷？不要自己嚇自己！」"
+    },
+    "correct": "C",
+    "optionReasons": {
+      "A": "極度危險！路易氏體失智症（DLB）長者對典型抗精神病藥物（尤其是Haloperidol）具有高度神經致命敏感性，易誘發惡性抗精神病藥症候群（NMS）或嚴重錐體外症候群（EPS）致死！",
+      "B": "拿掃把假裝打小偷看似解決當下，但等於「證實了現場真的有小偷存在」，會讓長者更加深信環境充滿危險，夜間幻覺只會更頻繁恐怖。",
+      "C": "正確！DLB的視幻覺非常生動逼真。應先給予長者「身體同在與保護承諾」，利用改善光照、消除對比陰影等環境調整減弱視覺錯認，並引導至明亮處，避免使用具錐體外風險之精神藥物。",
+      "D": "強迫長者直視幻覺並指責長者「自己嚇自己」，在長者眼中如同逼他面對歹徒，會造成極度恐慌甚至引發急性心血管事件。"
+    },
+    "corePrinciple": "路易氏體視幻覺重在「身體陪伴與照明調控」，嚴禁強化幻覺真實性，嚴禁濫用典型抗精神病藥物。",
+    "sopReference": "路易氏體失智症臨床照護SOP：視幻覺環境光照調整與抗精神病藥物禁忌警訊。",
+    "redFlagAlert": "紅色高風險急症題：DLB長者抗精神病藥物高敏感性警訊，不可隨意給予第一代抗精神病藥物。",
+    "source": "台灣失智症協會／國際DLB照護指引",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T1-U1-ADV-03",
+    "themeId": "theme1",
+    "themeTitle": "長照失智長者的溝通方法與原則",
+    "unitId": "T1-U1",
+    "unitTitle": "單元一：建立安全感與承接情緒",
+    "difficulty": "advanced",
+    "scene": "corridor",
+    "riskLevel": "green",
+    "stem": "84歲張奶奶拿著泛黃的全家福相片在走廊啜泣：「天都黑了，我家先生今天怎麼還沒下班回家？我要趕快煮晚餐等他！」（先生已過世15年）。照護員若要運用「懷舊整合與情感共鳴」，下列哪一種回應層次最高？",
+    "options": {
+      "A": "「張奶奶，張爺爺已經過世15年了，靈骨塔我們每年都有去拜，您怎麼又忘記了呢？」",
+      "B": "「張奶奶您放心，張爺爺剛打電話來說今天加班很晚才回來，叫您先去吃便當。」",
+      "C": "「張奶奶，您跟先生感情一定非常好，他工作那麼辛苦，您以前晚餐最常煮哪一道他最愛吃的拿手菜呀？您跟我說說，等一下我們也來看看今天機構的大廚準備了什麼好料好嗎？」",
+      "D": "「張奶奶不要哭了，哭對眼睛不好，我們先回房間吃顆糖果看電視。」"
+    },
+    "correct": "C",
+    "optionReasons": {
+      "A": "以理性殘酷事實戳破長者的記憶時空，會讓長者反覆承受「剛得知喪偶」的急性哀傷與崩潰，極不人道。",
+      "B": "說謊聲稱先生打電話加班，雖然換得一時安靜，但建立在虛假承諾上，長者到了半夜仍會持續枯等甚至引發失眠徘徊。",
+      "C": "正確！看見並肯定行為背後深層的「對先生的愛與賢慧角色」，透過引導回憶「拿手菜」啟動長者長期記憶中的價值感與自我效能，再平滑連結到當下的晚餐情境。",
+      "D": "抑制長者的哀傷情緒（叫長者不要哭）並塞糖果，忽略了長者內心的情感需求，長者會感到自己的悲傷被否定。"
+    },
+    "corePrinciple": "肯定長者生命史中的核心角色與愛，以生活情感連結當下活動，化解時空錯置帶來的分離焦慮。",
+    "sopReference": "失智症懷舊團體與個別化溝通指引：喪親哀傷與家庭角色回溯引導規範。",
+    "redFlagAlert": "綠色支持題：留意長者若持續深陷抑鬱拒食，需由護理師評估老年憂鬱量表（GDS）。",
+    "source": "驗證療法（Validation Therapy）創始人 Naomi Feil 實務教本",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T1-U2-ADV-01",
+    "themeId": "theme1",
+    "themeTitle": "長照失智長者的溝通方法與原則",
+    "unitId": "T1-U2",
+    "unitTitle": "單元二：聽懂非語言訊息與環境調整",
+    "difficulty": "advanced",
+    "scene": "bedroom",
+    "riskLevel": "red",
+    "stem": "81歲罹患帕金森症合併失智症的郭爺爺，平時臉部僵硬呈「面具臉（Masked face）」，今日上午活動時長輩緊閉雙眼、雙手握拳置於腹部，對照護員的問候無言語回應且抗拒站起，照護員量測血壓為 158/92 mmHg（平常為 128/78 mmHg）、心跳 104 次/分。此時最專業的非語言評估方向為何？",
+    "options": {
+      "A": "認為長者是帕金森藥物開關現象（Off state）發作，強拉長者雙手協助被動站立走動以加速藥效作用。",
+      "B": "辨識面具臉無法表現表情疼痛，由心搏過速、血壓飆高、握拳縮腹等自主神經與肢體線索，高度懷疑長者正承受急性疼痛（如急性腹痛或骨骼關節炎），立即使用 Abbey Pain Scale 評估並通報護理師。",
+      "C": "判定長者在鬧情緒生悶氣，先讓長輩在床上平躺休息，等下午長者情緒平復再行叫醒。",
+      "D": "認為長者是失智症重度退化出現運動失用症，直接通報醫師要求調高抗精神病藥物劑量。"
+    },
+    "correct": "B",
+    "optionReasons": {
+      "A": "在未排除急性疼痛前強行拉動長者肢體，若有骨折、扭傷或腹膜炎，將造成二次嚴重傷害並引發強烈防衛攻擊。",
+      "B": "正確！失智合併帕金森長者因面部神經退化呈現面具臉，無法以言語或哀號表達疼痛。血壓心跳上升、握拳縮腹、抗拒活動是非語言的強烈疼痛指標，需立即使用失智專用疼痛量表（如Abbey Pain Scale）全面評估。",
+      "C": "將生理急性痛點誤判為「長輩鬧脾氣」，是長照臨床最常見且致命的疏忽，可能延誤腸阻塞、急性闌尾炎或嵌頓性疝氣等外科急症。",
+      "D": "未經生理評估即通報調高精神藥物，不但不能止痛，還可能引發嗜睡、低血壓與不可逆的錐體外毒性。"
+    },
+    "corePrinciple": "失智面具臉長者重在解讀「心跳血壓、肢體縮緊、抗拒接觸」等非語言疼痛指標，杜絕忽視急症。",
+    "sopReference": "機構失智與無法言語個案疼痛評估SOP：Abbey Pain Scale 與生命徵象關聯指引。",
+    "redFlagAlert": "紅色高風險急症題：突發血壓心跳上升併腹部蜷縮，需急診外科排除急腹症或骨折。",
+    "source": "台灣老年醫學會老年急重症照護手冊",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T1-U2-ADV-02",
+    "themeId": "theme1",
+    "themeTitle": "長照失智長者的溝通方法與原則",
+    "unitId": "T1-U2",
+    "unitTitle": "單元二：聽懂非語言訊息與環境調整",
+    "difficulty": "advanced",
+    "scene": "corridor",
+    "riskLevel": "yellow",
+    "stem": "83歲阿茲海默中重度長者行經機構走廊的大型落地全身鏡時，突然面露驚恐、指著鏡中自己的倒影大聲咆哮揮拳：「你這個陌生老頭天天跟蹤我！你到底是誰？滾出去！」此時環境調整與即時溝通的最佳處置為何？",
+    "options": {
+      "A": "拉著長者的手緊貼鏡面，用力指著鏡子說：「長輩您看清楚，鏡子裡面的人有皺紋、穿著您的毛衣，那就是您自己呀！」",
+      "B": "順應長者妄想，站在長者身邊對著鏡子破口大罵：「對！這老頭太壞了，我幫您叫警衛把他抓走！」",
+      "C": "辨識此為失智長者的「自體面孔辨識失認症（Mirror agnosia）」，立即以身體溫和斜切阻隔長者與鏡面的視線對焦，引導長者轉身離開走廊；並於事後以霧面磨砂貼紙或藝術門簾覆蓋該落地鏡。",
+      "D": "嘲笑長輩返老還童真可愛，當場拿出手機錄影準備給家屬看長者的滑稽反應。"
+    },
+    "correct": "C",
+    "optionReasons": {
+      "A": "頂葉與顳葉聯合皮質退化導致自體面孔辨識喪失，強迫長者照鏡子講理只會讓長者感到被陌生人逼近，引爆打破鏡子的流血衝突。",
+      "B": "對著鏡子罵「壞老頭」看似挺長輩，實則進一步證實「長照機構走廊真的潛伏了可疑陌生人」，會讓長輩從此不敢走出房門，引發重度幽閉與恐懼。",
+      "C": "正確！臨床上稱為鏡像失認症（Mirror sign）。長輩無法辨識鏡中自己為本人，常錯認為入侵者。第一時間應「以人體阻隔視線」、迅速帶離刺激源，並透過環境物理改造（霧面貼、布簾）徹底根除誘因。",
+      "D": "嘲笑長者或錄影嚴重踐踏成人長者尊嚴，違反長照倫理與個資隱私法規。"
+    },
+    "corePrinciple": "認識鏡像失認症（Mirror Agnosia），以環境物理遮蔽替代言語爭辯，消除恐懼誘因。",
+    "sopReference": "機構防失智BPSD環境營造SOP：反光鏡面、玻璃倒影與地面高反差色彩調整規範。",
+    "redFlagAlert": "黃色風險題：預防長者因幻覺恐慌砸破玻璃鏡面造成割傷流血意外。",
+    "source": "Journal of the American Geriatrics Society (JAGS) 鏡像失認研究實務",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T1-U3-ADV-01",
+    "themeId": "theme1",
+    "themeTitle": "長照失智長者的溝通方法與原則",
+    "unitId": "T1-U3",
+    "unitTitle": "單元三：簡短肯定句與有限選擇",
+    "difficulty": "advanced",
+    "scene": "bedroom",
+    "riskLevel": "yellow",
+    "stem": "79歲中度血管型失智合併觀念運動性失用症（Ideomotor apraxia）的洪伯伯，早晨坐在床緣拿著開襟排釦襯衫發呆，甚至試圖將雙腳套進袖管，表現得十分挫折與懊惱。為了兼顧「自立支援精神」與「降低認知負荷」，照護員下列引導方式何者最專業？",
+    "options": {
+      "A": "下達整合性指令：「伯伯快點，先把衣服扣子全解開，反面翻到正面，左手穿進左邊袖子，右手穿進右邊，最後拉整齊扣好。」",
+      "B": "為避免長者挫折且節省早班交接時間，照護員直接奪過襯衫，在30秒內熟練地幫伯伯穿好扣好並誇獎他很棒。",
+      "C": "將排釦襯衫正面朝上、領口朝向長輩擺在膝蓋上；每次只給予「單一動詞＋具體視覺觸覺提示」（例如輕拍其右手並指著袖口：「伯伯，右手伸進這個袖子」），完成一步給予肯定，再引導下一步。",
+      "D": "跟伯伯說：「您以前不是大老闆嗎？怎麼現在連穿衣服都不會？您慢慢自己穿，半小時後我再來看您穿好沒。」"
+    },
+    "correct": "C",
+    "optionReasons": {
+      "A": "多重步驟的複合指令超出了失智長者受損的工作記憶（Working memory）容量，只會造成認知當機與更深的無力感。",
+      "B": "直接由照護員全代勞穿衣，看似省時溫柔，但屬於「剝奪長者殘存自主能力（Disempowerment）」，會加速大腦運動皮質退化，讓長者在短時間內完全喪失穿衣能力。",
+      "C": "正確！針對失用症長者，自立支援的核心在於「任務拆解（Task breakdown）」與「階梯式提示（Graded cueing）」。簡化環境擺設，一次一個動作，結合本體感覺提示，保留其大腦神經迴路的最大自主性。",
+      "D": "提及過去輝煌職業並責備現在退化，極具羞辱性，會重創長者尊嚴並誘發重度憂鬱或抗拒社交。"
+    },
+    "corePrinciple": "失用症引導採「任務單一步驟拆解（Task Breakdown）」與「視覺本體感覺同步提示」，落實自立支援。",
+    "sopReference": "自立支援照護SOP：失智失用長者日常生活自理能力（ADL）訓練與提示階梯指引。",
+    "redFlagAlert": "黃色風險題：穿衣失用引發的挫折與焦躁易在換班催促時轉化為肢體推擠。",
+    "source": "職能治療失智症日常生活自立支援臨床指引",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T1-U3-ADV-02",
+    "themeId": "theme1",
+    "themeTitle": "長照失智長者的溝通方法與原則",
+    "unitId": "T1-U3",
+    "unitTitle": "單元三：簡短肯定句與有限選擇",
+    "difficulty": "advanced",
+    "scene": "dining",
+    "riskLevel": "green",
+    "stem": "下午點心時間，照護員推著點心車來到交誼廳，車上有蛋糕、布丁、餅乾、水果切盤、綠豆湯、燕麥片等 8 種點心。82歲輕中度阿茲海默症的林老師看著推車神情呆滯、雙手絞在一起，顯得非常焦慮緊張。照護員應如何調整溝通方式以消除其「選擇過載（Choice overload）」？",
+    "options": {
+      "A": "提高嗓門將 8 種點心名稱大聲念過一次，並給予倒數計時：「林老師大家都在等，您要選哪一個？倒數五秒喔！」",
+      "B": "認為長者沒有做決定的能力，不徵詢長者意願，逕自夾取一大塊蛋糕塞在長者面前。",
+      "C": "收合其餘點心視線干擾，雙手各端起一份具體實物（例如「軟嫩布丁」與「香甜水果盤」），放於林老師同視線高度，微笑使用二選一具體句：「林老師，今天想吃冰涼的布丁，還是新鮮的水果？」（有限選擇法）。",
+      "D": "轉頭詢問隔壁桌長者：「林老師平常都吃什麼？你幫他決定好了。」"
+    },
+    "correct": "C",
+    "optionReasons": {
+      "A": "將 8 項選擇一口氣列出並倒數計時，會產生嚴重的感覺刺激超載（Sensory overload），長者的執行功能完全癱瘓，焦慮直接轉化為暴躁或退縮。",
+      "B": "直接代為決定完全抹煞長者的自我決定權（Autonomy），長者長期被忽視會產生習得無助感（Learned helplessness）。",
+      "C": "正確！失智長者在多選項時極易產生選擇過載。提供「二選一實體視覺對比（Limited choice）」既賦予長者尊嚴與控制感，又將認知抉擇負荷降至長者能負荷的程度。",
+      "D": "當著長者的面請他人代為做主，是典型的「去人化（Depersonalization）」對待，會讓長者感到被邊緣化與自卑。"
+    },
+    "corePrinciple": "以二選一實物對比（Limited Choice）取代開放式多重清單，賦予掌控感並預防選擇過載恐慌。",
+    "sopReference": "以人為本照護（PCC）實務指引：日常飲食與活動選擇之有限提示操作守則。",
+    "redFlagAlert": "綠色支持題：若長者有吞嚥窒息風險，提供的二選一品項皆須符合個案吞嚥安全質地。",
+    "source": "Kitwood 以人為本失智照護理論（Person-Centred Care）",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T1-U4-ADV-01",
+    "themeId": "theme1",
+    "themeTitle": "長照失智長者的溝通方法與原則",
+    "unitId": "T1-U4",
+    "unitTitle": "單元四：維護成人尊嚴與自主感",
+    "difficulty": "advanced",
+    "scene": "lounge",
+    "riskLevel": "yellow",
+    "stem": "83歲確診額顳葉失智症（FTD，脫抑制型）的趙伯伯，在交誼廳突然伸手撫摸年輕女性實習護生的大腿，並說出「小姑娘妳腿真白，來陪我睡覺」等性不適當言行，現場有其他長者側目。此時照護團隊最適切且符合專業倫理的處置策略為何？",
+    "options": {
+      "A": "實習生因感到被羞辱，立即大聲哭喊斥責：「老不修、變態色狼！」並發動全機構長者對其公審排擠。",
+      "B": "帶班學姐跟實習生說：「失智老人都這樣啦，妳忍耐一下不要計較，長輩摸一下又不會少塊肉。」",
+      "C": "態度保持冷靜平穩、神情嚴肅堅定，立即伸手溫和但堅決移開趙伯伯的手，直視眼睛清楚告知界線：「趙伯伯，請看我的眼睛，不可以摸大腿，請把雙手放在桌面上。」隨即安排長者進行需雙手操作的重阻抗活動（如手搖發電輪、整理厚毛巾或握力球），並提報團隊評估額葉抑制脫序。",
+      "D": "立即將趙伯伯雙手使用約束帶綑綁固定在輪椅兩側扶手，並關入隔離室懲罰一整天。"
+    },
+    "correct": "C",
+    "optionReasons": {
+      "A": "額顳葉失智（FTD）因額葉眼眶額皮質退化喪失社交抑制能力，並非故意犯罪。公開羞辱大罵會誘發長者的攻擊行為，且無法達到教育效果。",
+      "B": "要求實習生忍受騷擾完全違反職業安全衛生法與性騷擾防治法，亦會強化長者不自覺的脫抑制行為模式。",
+      "C": "正確！面對性不適當行為，核心在於「平靜、不情緒化、清楚劃定界線（Firm boundary）」，立即中斷接觸，並將雙手動能轉移至具阻抗力的合宜活動（Motor redirection）；事後通報醫療團隊檢視是否需神經精神調整。",
+      "D": "任意施加肢體約束與關隔離室屬於嚴重長照虐待違法行為，會導致長者極端恐慌、心肺功能衰竭與法律責任。"
+    },
+    "corePrinciple": "性脫抑制言行採「平靜堅定劃定界線、非懲罰性物理阻隔、雙手動能轉移（Motor Redirection）」。",
+    "sopReference": "機構性不適當言行（Inappropriate Sexual Behavior）預防與處置SOP：員工保護與失智脫抑制處置標準。",
+    "redFlagAlert": "黃色風險題：需同時兼顧員工職業安全防護與失智長者病理脫抑制之非懲罰性倫理處理。",
+    "source": "Alzheimer's Association 照護機構不適當性行為處理臨床指引",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T1-U4-ADV-02",
+    "themeId": "theme1",
+    "themeTitle": "長照失智長者的溝通方法與原則",
+    "unitId": "T1-U4",
+    "unitTitle": "單元四：維護成人尊嚴與自主感",
+    "difficulty": "advanced",
+    "scene": "garden",
+    "riskLevel": "red",
+    "stem": "77歲輕中度阿茲海默症的江媽媽，步態稍微搖晃但深愛戶外陽光，每天堅持在機構花園散步。昨日江媽媽在花園不慎踉蹌擦傷膝蓋。家屬探視時非常憤怒，拍桌要求機構：「從明天開始，為了防跌，請你們把她整天用安全帶固定在輪椅上，不准讓她自己站起來走！」身為機構護理師，下列溝通與倫理處置何者最專業？",
+    "options": {
+      "A": "為避免家屬提告與醫療糾紛，立即順從家屬要求，簽立約束同意書後將長者整天綁在輪椅上防跌。",
+      "B": "直接回嗆家屬：「跌倒受傷在所難免，我們機構採自立支援不約束，您如果怕摔，請現在辦離院帶回家自己顧！」",
+      "C": "堅定捍衛非約束與自立支援倫理，召集跨專業照護會議同理家屬害怕長輩重傷的孝心，客觀說明長期輪椅約束將造成肌肉快速萎縮、骨質疏鬆、褥瘡與BPSD激化等更高致死風險；提出整合替代方案：評估合適助行輔具、環境平整防滑巡檢、安排肌力平衡復健，並由工作人員及志工安排特定時段陪同步行。",
+      "D": "表面答應家屬約束，但趁家屬走後偷偷解開，並私下串通照服員「萬一又摔倒絕對不要讓家屬知道」。"
+    },
+    "correct": "C",
+    "optionReasons": {
+      "A": "順從家屬防跌要求施加長期約束，在法規上屬於「不當身體約束」。限制人身自由會讓長者下肢肌力在兩週內衰退30%以上，且大幅提高壓瘡與死亡率。",
+      "B": "情緒性對立回絕無法解決家屬內心的恐懼，反而破壞醫護信任關係，容易直接引發行政申訴與法律訴訟。",
+      "C": "正確！此為長照最經典的「自主尊嚴（Autonomy）vs 防護傷害（Beneficence）」倫理衝突。應同理家屬擔憂，以實證醫學數據破除「約束就能防跌」的迷思，提出多重環境代償與陪伴散步之整合性降低傷害策略。",
+      "D": "隱瞞家屬與造假串供違反護理師法與醫療誠信原則，一旦發生嚴重意外將承擔嚴重的民刑事責任。"
+    },
+    "corePrinciple": "堅守自立支援與非約束原則，以「同理家屬焦慮、實證揭露約束危害、環境輔具多重代償」化解防跌衝突。",
+    "sopReference": "機構身體約束評估與替代策略SOP：防跌自主活動權利維護與家屬溝通指引。",
+    "redFlagAlert": "紅色高風險倫理題：長照機構約束評估適法性與預防約束致死之重大病人安全指標。",
+    "source": "衛生福利部身心障礙與老人福利機構非藥物與非約束照護指引",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
   }
 ];
 

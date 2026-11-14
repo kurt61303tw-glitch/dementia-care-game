@@ -6,6 +6,7 @@
 window.QUESTIONS_THEME_2 = [
   // ================= 單元 1：飲食與飲水支持（12題） =================
   {
+    difficulty: "basic",
     id: "T2-U1-01",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -37,6 +38,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U1-02",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -68,6 +70,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U1-03",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -99,6 +102,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U1-04",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -130,6 +134,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U1-05",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -161,6 +166,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U1-06",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -192,6 +198,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U1-07",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -223,6 +230,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U1-08",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -254,6 +262,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U1-09",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -285,6 +294,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U1-10",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -316,6 +326,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U1-11",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -347,6 +358,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U1-12",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -380,6 +392,7 @@ window.QUESTIONS_THEME_2 = [
 
   // ================= 單元 2：沐浴、更衣與如廁清潔（12題） =================
   {
+    difficulty: "basic",
     id: "T2-U2-01",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -411,6 +424,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U2-02",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -442,6 +456,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U2-03",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -473,6 +488,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U2-04",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -504,6 +520,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U2-05",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -535,6 +552,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U2-06",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -566,6 +584,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U2-07",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -597,6 +616,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U2-08",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -628,6 +648,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U2-09",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -659,6 +680,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U2-10",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -690,6 +712,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U2-11",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -721,6 +744,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U2-12",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -754,6 +778,7 @@ window.QUESTIONS_THEME_2 = [
 
   // ================= 單元 3：作息調整與黃昏時段焦躁（12題） =================
   {
+    difficulty: "basic",
     id: "T2-U3-01",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -785,6 +810,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U3-02",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -816,6 +842,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U3-03",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -847,6 +874,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U3-04",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -878,6 +906,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U3-05",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -909,6 +938,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U3-06",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -940,6 +970,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U3-07",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -971,6 +1002,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U3-08",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1002,6 +1034,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U3-09",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1033,6 +1066,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U3-10",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1064,6 +1098,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U3-11",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1095,6 +1130,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U3-12",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1128,6 +1164,7 @@ window.QUESTIONS_THEME_2 = [
 
   // ================= 單元 4：物品遺失懷疑與安全異常辨識（12題） =================
   {
+    difficulty: "basic",
     id: "T2-U4-01",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1159,6 +1196,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U4-02",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1190,6 +1228,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U4-03",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1221,6 +1260,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U4-04",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1252,6 +1292,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U4-05",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1283,6 +1324,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U4-06",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1314,6 +1356,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U4-07",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1345,6 +1388,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U4-08",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1376,6 +1420,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U4-09",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1407,6 +1452,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U4-10",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1438,6 +1484,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U4-11",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1469,6 +1516,7 @@ window.QUESTIONS_THEME_2 = [
     reviewDate: "2027-05-12"
   },
   {
+    difficulty: "basic",
     id: "T2-U4-12",
     themeId: "theme2",
     themeTitle: "失智長者的照顧方式（日常生活常見問題）",
@@ -1498,6 +1546,312 @@ window.QUESTIONS_THEME_2 = [
     auditStatus: "published",
     auditTrail: { draft: true, clinical: true, education: true, sop: true, published: true },
     reviewDate: "2027-05-12"
+  }
+,
+  // ================= 高階臨床實戰進階題組 (🔥) =================
+{
+    "id": "T2-U1-ADV-01",
+    "themeId": "theme2",
+    "themeTitle": "失智長者的照顧方式（日常生活常見問題）",
+    "unitId": "T2-U1",
+    "unitTitle": "單元一：飲食與飲水支持",
+    "difficulty": "advanced",
+    "scene": "dining",
+    "riskLevel": "red",
+    "stem": "85歲中重度阿茲海默症李奶奶，近一週進食午餐時常常把盛滿飯菜的湯匙停在半空中發呆，或把食物放入口中後含著超過10分鐘不咀嚼吞嚥（含飯現象），且偶爾在進食後伴隨清喉嚨與濕性咳嗽聲（gurgling sound）。為維護進食尊嚴、預防吸入性肺炎並促進自立支援，照護團隊下列整合處置何者最妥當？",
+    "options": {
+      "A": "判定長者吞嚥功能已完全喪失，為防吸入性肺炎危及生命，立即建議家屬並通報醫師強制置入鼻胃管（NG tube）改全管灌。",
+      "B": "接過李奶奶的湯匙，將飯菜壓碎拌在一起大口餵入，並每口隨時強行灌入大杯水衝下食物協助吞嚥。",
+      "C": "站在李奶奶身後不斷敲打桌面反覆催促口頭指令：「李奶奶吞下去！嘴巴用力咬！快點吞！」，並用壓舌板撬開嘴唇檢查。",
+      "D": "調整坐姿為軀幹正直微向前傾、下巴微縮（chin-tuck）；照護者坐在同視線高度，輕拍長者手部喚醒本體感覺並示範咀嚼吞嚥動作；評估食物質地進行適度軟化與增稠分食，餐後維持坐姿至少30分鐘防逆流。"
+    },
+    "correct": "D",
+    "optionReasons": {
+      "A": "過早放棄經口進食而置入鼻胃管，會讓長輩口腔機能在數週內急速廢用退化，且鼻胃管並不能百分之百預防口水引發的吸入性肺炎，剝奪品嚐滋味的生命尊嚴。",
+      "B": "強行大口餵食並用水大口衝嚥，水流速度遠快於食團，是造成水分直接嗆入氣管引發致命吸入性肺炎的最危險操作！",
+      "C": "高壓催促與敲擊桌面只會造成長者驚慌，導致會厭軟骨閉合失調，在嗆咳高風險下撬嘴極易造成牙齒斷裂或咬傷照護者。",
+      "D": "正確！含飯常因失用症（忘記如何啟動吞嚥）或感覺傳導遲緩引起。下巴微縮（chin-tuck）可加寬會厭溪並縮小氣管開口，示範咀嚼可喚起鏡像神經元反射，質地調整與餐後坐姿是國際防嗆金標準。"
+    },
+    "corePrinciple": "姿勢代償（下巴微縮）、感覺誘發自立進食、質地調整，落實自立支援並嚴防吸入性肺炎。",
+    "sopReference": "吞嚥障礙照護與防嗆咳SOP：經口進食姿勢代償、增稠分級與餐後防逆流照護標準。",
+    "redFlagAlert": "紅色高風險急症題：濕性囉音（Gurgling sound）為隱性吸入性肺炎之警訊，進食血氧監測與聽診評估。",
+    "source": "台灣咀嚼吞嚥障礙醫學學會臨床指引／Dysphagia Care Standards",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T2-U1-ADV-02",
+    "themeId": "theme2",
+    "themeTitle": "失智長者的照顧方式（日常生活常見問題）",
+    "unitId": "T2-U1",
+    "unitTitle": "單元一：飲食與飲水支持",
+    "difficulty": "advanced",
+    "scene": "dining",
+    "riskLevel": "yellow",
+    "stem": "80歲輕中度失智長者，剛吃完一整碗營養豐盛的午餐，不到10分鐘又氣沖沖跑到護理站用力拍桌大喊：「你們這間黑心養老院！到現在都不給我飯吃，想把我餓死是不是！」若從大腦神經病理學出發，下列溝通與照護應對何者最專業？",
+    "options": {
+      "A": "拿出剛才長者吃完的空碗與監視器錄影，嚴厲指著碗說：「您看清楚！這碗您剛剛才吃個精光，監視器都錄到了，您不要無理取鬧！」",
+      "B": "跟長者說：「好啦好啦您太可憐了，我馬上再去廚房幫您盛一大碗熱騰騰的油飯跟炸雞排給您吃飽飽。」",
+      "C": "理解失智導致下視丘飽食中樞（Satiety center）訊息傳導障礙，長者感受到的「飢餓感是千真萬確的生理體驗」；先同理其飢餓感受，提供低熱量、小份量、高纖維的健康替代小點（如微溫清湯、薄蘋果片或小黃瓜條），並引導長者共同進行洗碗、擦桌子等「象徵進食結束的完形活動」。",
+      "D": "跟長者說：「您兒子交代不能讓您吃太多會變胖，今天沒有您的飯了，回去房間坐好。」"
+    },
+    "correct": "C",
+    "optionReasons": {
+      "A": "拿出錄影或空碗強迫認錯，屬於直接否定長者的主觀感受。長者因記憶障礙完全不記得曾進食，強行證明長者錯只會讓長者懷疑機構串供陷害。",
+      "B": "毫無節制地再次提供高熱量大餐，會造成胃穿孔、胃食道逆流、肥胖與急性胰臟炎等嚴重內科併發症。",
+      "C": "正確！失智長者下視丘神經元退化導致飽腹訊號無法被感知，不能責怪長輩「貪吃」。以極低負擔之健康小品滿足當下口慾，搭配「洗碗收拾」等生活儀式感，幫助大腦建立「用餐已圓滿結束」的心智閉合。",
+      "D": "搬出家屬來壓制長者，會激起長者對家屬的怨恨，且「不給飯吃」坐實了長者被虐待的想像。"
+    },
+    "corePrinciple": "接納下視丘飽食失調之真實飢餓感受，以低熱量小點與「進食儀式完形活動」化解重複索食衝突。",
+    "sopReference": "機構營養與暴食/重複索食管理SOP：低卡代餐準備、生活活動轉移與體重監測流程。",
+    "redFlagAlert": "黃色風險題：頻繁過度餵食易誘發長者急性胃擴張、嘔吐嗆咳與血糖嚴重失控。",
+    "source": "美國老年醫學會（AGS）失智進食行為異常非藥物介入指引",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T2-U2-ADV-01",
+    "themeId": "theme2",
+    "themeTitle": "失智長者的照顧方式（日常生活常見問題）",
+    "unitId": "T2-U2",
+    "unitTitle": "單元二：沐浴、更衣與如廁清潔",
+    "difficulty": "advanced",
+    "scene": "bathroom",
+    "riskLevel": "yellow",
+    "stem": "82歲中度阿茲海默症林爺爺已連續5天堅決拒絕洗澡，身上已出現異味。今日照護員打開浴室蓮蓬頭時，林爺爺一聽到水聲、看到噴濺水花便極度驚恐尖叫，雙拳胡亂揮打並退縮到牆角。面對長者嚴重的「恐水症（Aquaphobia）與感官侵犯」，最適當的漸進式沐浴策略為何？",
+    "options": {
+      "A": "請三名男性壯碩照護員衝上前合力抓住長者四肢，以最快速度在5分鐘內用冷熱水強行沖洗乾淨。",
+      "B": "立即關閉蓮蓬頭水聲與噴霧刺激，先退出浴室返回溫暖房間；以大浴巾包覆長者維持體溫與安全感，改採「分區無水/微水擦澡」，並在放有長者喜愛茶香與輕音樂的環境下，由足部進行溫熱足浴，建立信任後再逐步擴展清潔範圍。",
+      "C": "跟長輩說：「您身上臭死了像垃圾堆一樣，室友都在嫌棄您，不洗澡今天晚上不准上床睡覺！」",
+      "D": "既然長輩不願意洗，為避免衝突，乾脆放任長者一個月不洗澡，等長輩哪天自己開口要求再說。"
+    },
+    "correct": "B",
+    "optionReasons": {
+      "A": "多人壓制強行沖水是極度野蠻的暴行，會在長者殘存的情感記憶（Amygdala 杏仁核）中留下不可磨滅的創傷印記，從此讓每一次沐浴都演變成你死我活的生死搏鬥。",
+      "B": "正確！失智長者的拒澡常源於「對流水失真的恐懼（恐水症）、低體溫寒冷感、赤身裸體的羞恥感」。應以「去敏感化（Desensitization）」為原則：關閉水聲、浴巾覆蓋保暖、溫水足浴破冰、改採分區漸進式擦澡，維護安全與尊嚴。",
+      "C": "言語羞辱與威脅只會激起防衛性憤怒與自我孤立，徹底破壞照護關係。",
+      "D": "放任長期不洗澡會引發嚴重的壓瘡、念珠菌感染、疥瘡或蜂窩性組織炎，屬於照護怠惰與疏忽。"
+    },
+    "corePrinciple": "化解恐水抗拒採「消除水流視聽刺激、毛巾覆蓋保暖去羞恥、溫水足浴漸進式去敏感擦澡」。",
+    "sopReference": "拒絕沐浴之創傷知情照護SOP：恐水症去敏感化步驟、毛巾包覆沐浴法（Towel Bath）。",
+    "redFlagAlert": "黃色風險題：評估長者是否有失禁性皮膚炎（IAD）、黴菌感染或隱蔽性骨折疼痛導致抗拒觸碰。",
+    "source": "Bath Without a Battle: Person-Centered Bathing in Dementia Care 國際指引",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T2-U2-ADV-02",
+    "themeId": "theme2",
+    "themeTitle": "失智長者的照顧方式（日常生活常見問題）",
+    "unitId": "T2-U2",
+    "unitTitle": "單元二：沐浴、更衣與如廁清潔",
+    "difficulty": "advanced",
+    "scene": "bathroom",
+    "riskLevel": "yellow",
+    "stem": "男性照服員小王在下午協助78歲重度失智女性陳奶奶更換失禁尿褲時，剛解開外褲，奶奶突然驚恐大叫「有流氓非禮！」並雙手緊抓褲頭、用腳猛踢小王。身為現場帶班護理人員，當下應如何指揮處置最能維護長者隱私尊嚴與人員安全？",
+    "options": {
+      "A": "要求小王不顧長者踢打，加快動作強行在30秒內將尿褲撕下換好，避免弄髒床單。",
+      "B": "大聲責備奶奶：「陳奶奶您眼睛睜大看清楚，這是小王照服員，他是來幫您擦尿布的，哪來的流氓！」",
+      "C": "立即請小王後退並拉起大毛毯遮蓋長者下半身以保全隱私；評估長者因創傷記憶或異性照護引發強烈防衛，換由陳奶奶平時最信賴的女性照護員接手，先輕柔握手安定情緒，以女性生理衛生溝通口吻柔聲引導完成清潔。",
+      "D": "立即對陳奶奶雙手雙腳施以四肢約束帶固定，再由小王完成清潔。"
+    },
+    "correct": "C",
+    "optionReasons": {
+      "A": "忽視長輩的抗拒強行脫褲，在長輩認知中就是遭遇真正的性侵犯暴力，會造成長期恐懼創傷與往後每次如廁的劇烈搏鬥。",
+      "B": "在長者處於急性性侵恐懼當下進行說理指責，毫無安撫效果，反而讓長輩更加深陷絕望抗拒。",
+      "C": "正確！重度失智長者在涉及私密部位清潔時，常因缺乏情境理解將異性照護解讀為猥褻侵犯。第一時間「拉被遮蔽以護尊嚴」、後退保持安全距離，換由同性別熟識人員接手並柔聲安撫，符合創傷知情照護原則。",
+      "D": "動用四肢約束是嚴重違法與侵害人權行為，會加速身心崩潰與致死風險。"
+    },
+    "corePrinciple": "私密處護理遇抗拒應「即刻遮蔽隱私、保持安全距離、同性熟識人員接手、創傷知情溫和處置」。",
+    "sopReference": "機構排泄照護與異性照服防禦SOP：性隱私防護、性別敏感度與創傷知情更換尿褲規範。",
+    "redFlagAlert": "黃色風險題：落實照護者職場安全防護與預防長者失禁性皮膚炎惡化之雙重平衡。",
+    "source": "長照機構性別平等與失智創傷知情照護（Trauma-Informed Care）工作手冊",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T2-U3-ADV-01",
+    "themeId": "theme2",
+    "themeTitle": "失智長者的照顧方式（日常生活常見問題）",
+    "unitId": "T2-U3",
+    "unitTitle": "單元三：作息調整與黃昏時段焦躁",
+    "difficulty": "advanced",
+    "scene": "lounge",
+    "riskLevel": "yellow",
+    "stem": "每天下午4點半左右，日落西斜、窗外光線漸暗且交接班人車雜沓時，機構交誼廳總有數位失智長者集體坐立難安、收拾包巾、用力拍打感應大門吵著要「回鄉下老家照顧田地」。針對典型的「黃昏症候群（Sundowning syndrome）」，照護團隊在環境與生物節律上的最佳預防性策略為何？",
+    "options": {
+      "A": "提早於下午3點半拉上厚窗簾阻隔窗外暮色陰影，開啟室內全光譜明亮高照度照明（消除視覺感官錯覺）；並於4點前規劃安排耗費精力的結構化團體活動（如傳球運動、懷舊香草茶點、撥毛線比賽），主動消耗長者精力並重構日落前的生理節奏。",
+      "B": "在下午4點整預防性給予全體吵鬧長者口服短效安眠藥或鎮靜劑，讓長者在交接班時全數入睡以維持安靜。",
+      "C": "將長者全數請回各自房間，將房門反鎖並關閉所有電燈，強迫長輩提早適應天黑入睡。",
+      "D": "跟長輩說：「大門已經上鎖了，外面有野狗很危險，你們誰都別想出去，乖乖坐好等吃晚餐！」"
+    },
+    "correct": "A",
+    "optionReasons": {
+      "A": "正確！黃昏症候群是大腦視交叉上核（SCN）退化、褪黑激素節律失調與日落視覺光影錯覺所誘發。國際實證指引指出：提前於日落前「全區高照度照明拉簾」、「安排結構化體能與感官活動轉移注意力」，是最有效的非藥物預防金標準。",
+      "B": "常規無差別給予鎮靜安眠藥會大幅增加跌倒骨折、意識混濁、急性譫妄與呼吸抑制的致死風險，違反世界衛生組織去鎮靜藥物原則。",
+      "C": "天黑提早關房門反鎖會引發嚴重的幽閉恐懼與孤立，長者在昏暗房間內看見陰影視幻覺更加劇烈，往往引發跳床或破門重傷。",
+      "D": "以恐嚇言語（有野狗）與權威鎖門壓制，只會激化長者的被囚禁感與恐慌，引發長者集體衝撞或暴力衝突。"
+    },
+    "corePrinciple": "黃昏症候群重在「日落前提前光照全開（消除暮色陰影）」與「下午結構化動態活動消耗精力」之節律重構。",
+    "sopReference": "黃昏症候群非藥物照護SOP：高照度光照療法（Light Therapy）、作息節律調整與防遊走活動規劃。",
+    "redFlagAlert": "黃色風險題：黃昏時段為機構跌倒與衝門走失的第一高峰期，需落實走廊防跌巡檢。",
+    "source": "Alzheimer's Foundation of America (AFA) 黃昏症候群非藥物處置指引",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T2-U3-ADV-02",
+    "themeId": "theme2",
+    "themeTitle": "失智長者的照顧方式（日常生活常見問題）",
+    "unitId": "T2-U3",
+    "unitTitle": "單元三：作息調整與黃昏時段焦躁",
+    "difficulty": "advanced",
+    "scene": "corridor",
+    "riskLevel": "red",
+    "stem": "80歲阿茲海默中度郭爺爺日間常在輪椅上打瞌睡超過5小時。今日凌晨2點，值班照服員巡邏時發現郭爺爺在走廊精神抖擻、光著腳用力搖晃安全大門喊著「我要去巡田水割稻子」，已吵醒其他房長者。值班人員最適宜的急性處置與日間作息根本調控方案為何？",
+    "options": {
+      "A": "當場強硬把爺爺拖回房間按在床上，關上大燈反鎖房門，嚴厲警告長輩：「現在是半夜兩點，再不睡覺明天就扣你的早餐！」",
+      "B": "半夜不強押長者回床引發格鬥，溫和引導至護理站旁柔和微光沙發區，端上一杯溫熱無咖啡因洋甘菊茶或溫熱牛奶，陪伴長輩翻閱老農作照片抒發想念，待其哈欠疲倦自然產生再引導回床入睡；並於白班召開跨專業會議，嚴格落實日間「不臥床、減少小睡、安排日光浴與高感官手作」以校準生物時鐘。",
+      "C": "立即請值班護理師通知值班醫師開立肌肉注射安眠針劑，將長輩強力麻醉入睡。",
+      "D": "打開安全大門讓爺爺一個人走到機構外馬路上，跟他說：「去吧去吧，巡完田再自己回機構睡覺。」"
+    },
+    "correct": "B",
+    "optionReasons": {
+      "A": "半夜強行押床並言語威脅，會誘發長者的急性戰鬥防衛，引發摔下床或暴力搏鬥，且關暗房只會讓長者整夜撞門尖叫。",
+      "B": "正確！日夜顛倒根源在於「白天的過度小睡與活動缺乏」。半夜遇到漫遊衝門時，採「不硬碰硬、微光安全區陪伴、溫熱飲品助眠」降焦，白天嚴格執行自立支援活動拉長清醒時間，才能從根本根治日夜節律紊亂。",
+      "C": "半夜緊急打安眠針劑極易引發長輩夜間起床上廁所時急性低血壓、肌肉無力造成致命性骨折或顱內出血。",
+      "D": "深夜放任失智長者單獨外出屬於嚴重的遺棄與危及生命行為，會造成車禍、墜溝、失溫凍死等致命悲劇。"
+    },
+    "corePrinciple": "半夜衝門採「微光區溫和陪伴與助眠誘發」，根治日夜顛倒重在「日間自立支援、日光浴與嚴格減少白日小睡」。",
+    "sopReference": "機構日夜顛倒與夜間漫遊應變SOP：夜間低刺激陪伴、防走失警報與日間清醒計畫。",
+    "redFlagAlert": "紅色高風險急症題：夜間遊走長者需嚴防赤腳滑倒與衝門走失，落實防跌與出入口監控。",
+    "source": "台灣老年精神醫學會失智睡眠障礙指引",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T2-U4-ADV-01",
+    "themeId": "theme2",
+    "themeTitle": "失智長者的照顧方式（日常生活常見問題）",
+    "unitId": "T2-U4",
+    "unitTitle": "單元四：物品遺失懷疑與安全異常辨識",
+    "difficulty": "advanced",
+    "scene": "bedroom",
+    "riskLevel": "red",
+    "stem": "78歲血管型失智症的王爺爺平時溫和配合。今日下午交接班時，照護員發現他突然極度躁動不安，頻繁用力扯解褲頭、眼神渙散且短暫認不得熟悉工作人員。當照護員走近想替他穿好褲子時，王爺爺突然憤怒揮拳並試圖咬人。此時第一線最優先且具臨床鑑別度的處置為何？",
+    "options": {
+      "A": "判定為失智症 BPSD 突發暴力攻擊行為，立即依常規醫囑給予 PRN 口服抗精神病鎮靜藥物（如 Haloperidol / Quetiapine），並啟動四肢保護性約束以防傷人。",
+      "B": "認為長者是交接班吵雜引發「黃昏症候群」，立即帶長輩到感官多功能室放輕音樂、進行芳療按摩與精油吸入。",
+      "C": "站在長者面前大聲反覆提示：「王爺爺，現在是下午四點，這裡是機構，我是小王，請您不要脫褲子。」",
+      "D": "保持一臂半安全防衛距離，先暫緩強行穿褲以避免激化衝突；立即由護理師評估生命徵象（體溫/血壓/血糖）、觸診下腹部是否有膨脹尿滯留、檢視最後排便解尿時間及尿液顏色混濁度，優先排除急性生理急症引發之「急性譫妄（Delirium）」與痛點。"
+    },
+    "correct": "D",
+    "optionReasons": {
+      "A": "致命錯誤！血管型失智突然出現「性格驟變＋扯褲頭＋認知混亂」，90%以上是急性生理急症引發的急性譫妄（如急性尿滯留、便秘嵌塞、無症狀UTI）。貿然給予抗精神病藥可能掩蓋急症、導致休克甚至膀胱破裂！",
+      "B": "芳療與音樂雖溫和，但面對膀胱極度脹滿尿滯留的長者，光做芳療只會延誤急症處理，讓長者在劇痛中發生敗血症。",
+      "C": "譫妄長者注意力嚴重受損，反覆高分貝現實導向只會增加感官過載，引發更強烈的肢體攻擊。",
+      "D": "正確！失智長者突發急性躁動＋動作針對下腹部（扯褲頭），臨床首要鐵則是「排除急性譫妄（Delirium superimposed on dementia）」。觸診膀胱尿滯留、量測體溫血糖、檢查便秘感染，解除生理痛苦，躁動往往在解尿或通便後瞬間平息！"
+    },
+    "corePrinciple": "突發躁動與扯褲行為首重「排除急性生理痛點與急性譫妄（尿滯留、便秘、感染）」，絕不可直接鎮靜約束！",
+    "sopReference": "機構急性譫妄辨識與緊急通報SOP：CAM量表評估、膀胱尿滯留超音波/觸診與感染篩檢標準。",
+    "redFlagAlert": "紅色高風險急症題：急性譫妄為長照致命重症之早期警訊，嚴禁誤判為退化而延誤送醫。",
+    "source": "台灣護理學會長照機構護理臨床指引／NICE Guideline for Delirium",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
+  },
+  {
+    "id": "T2-U4-ADV-02",
+    "themeId": "theme2",
+    "themeTitle": "失智長者的照顧方式（日常生活常見問題）",
+    "unitId": "T2-U4",
+    "unitTitle": "單元四：物品遺失懷疑與安全異常辨識",
+    "difficulty": "advanced",
+    "scene": "lounge",
+    "riskLevel": "red",
+    "stem": "80歲失智長者因近期夜間焦躁，前天門診由神經內科醫師調高了抗精神病藥物劑量。今日照護員發現長者進食時突然嘴角頻頻流口水、說話含糊不清、起身行走時如機器人般身體前傾、雙腳踏出僵硬微小的碎步（慌張步態 Festinating gait）且雙手出現靜止性搓丸狀顫抖。此時照護團隊應立即採取何種專業處置？",
+    "options": {
+      "A": "認為長者是故意不用力走路或失智急速惡化，由照護員嚴格下達口頭命令要求挺胸大步走，並通報醫師再加重鎮靜藥物劑量。",
+      "B": "敏銳辨識此為抗精神病藥物引起的「錐體外症候群（EPS，藥物性帕金森氏症）」急性藥物不良反應，立即通報護理師與處方醫師進行劑量重審與評估降階；同時將長輩列入高度防跌觀察，由專人陪伴步態與進食防嗆防跌倒。",
+      "C": "給予長者一雙高跟鞋或重底鞋，強迫長輩踩穩地面走路。",
+      "D": "判定長輩只是睡眠不足，給予高劑量咖啡或濃茶提神。"
+    },
+    "correct": "B",
+    "optionReasons": {
+      "A": "致命無知！長者出現慌張步態、流涎與手抖是典型的抗精神病藥物錐體外症候群（EPS），若誤判為退化再加藥，可能誘發致命的惡性抗精神病藥症候群（NMS）或嚴重吞嚥窒息死亡！",
+      "B": "正確！失智長者大腦黑質多巴胺神經脆弱，極易因抗精神病藥物劑量過高產生藥物性帕金森氏症（EPS）。敏銳辨識僵硬、碎步、流涎，立即通報醫師減藥或換藥，並加強防跌防嗆，是專業護理與照護核心價值。",
+      "C": "穿著重鞋或高跟鞋只會讓慌張步態的長者重心前傾失衡，直接向前仆倒造成頭部重創或骨折。",
+      "D": "濃茶與咖啡無法對抗抗精神病藥物的多巴胺受體阻斷，反而增加心律不整與頻尿跌倒風險。"
+    },
+    "corePrinciple": "用藥後出現「流涎、面僵、機器人碎步、搓丸手抖」為錐體外症候群（EPS）重大藥害警訊，立即通報防跌防嗆。",
+    "sopReference": "機構失智個案精神藥物安全監測SOP：錐體外症候群（EPS）與惡性症候群（NMS）早期辨識與通報處置規範。",
+    "redFlagAlert": "紅色高風險急症題：藥物不良反應之重大病人安全監測，嚴重時可致吞嚥窒息與致命跌倒。",
+    "source": "台灣臨床藥學會失智用藥安全與不良反應指引",
+    "version": "v2.0",
+    "auditStatus": "published",
+    "auditTrail": {
+      "draft": true,
+      "clinical": true,
+      "education": true,
+      "sop": true,
+      "published": true
+    },
+    "reviewDate": "2027-06-30"
   }
 ];
 

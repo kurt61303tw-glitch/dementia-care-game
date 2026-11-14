@@ -24,7 +24,8 @@
   }
 
   // 7A：僅通過全部五關卡審核（auditStatus === 'published'）的題目才可進入正式課堂與練習
-  function getPublishedQuestions(themeId, unitFilter = "ALL") {
+  // 支援難度過濾（預設 advanced: 高階臨床實戰篇；basic: 初階照護基礎篇；all: 全部題庫）
+  function getPublishedQuestions(themeId, unitFilter = "ALL", difficulty = "advanced") {
     return getAllQuestions().filter((q) => {
       const isPublished =
         q.auditStatus === "published" &&
@@ -37,8 +38,20 @@
       if (!isPublished) return false;
       if (themeId && themeId !== "ALL" && q.themeId !== themeId) return false;
       if (unitFilter && unitFilter !== "ALL" && q.unitId !== unitFilter) return false;
+      
+      const qDiff = q.difficulty || "basic";
+      if (difficulty === "advanced" && qDiff !== "advanced") return false;
+      if (difficulty === "basic" && qDiff !== "basic") return false;
       return true;
     });
+  }
+
+  // 難度徽章渲染標籤
+  function renderDifficultyBadge(diff) {
+    if (diff === "advanced") {
+      return `<span style="background:#FFE0B2; color:#BF360C; border:1px solid #FFB74D; font-weight:800; padding:2px 8px; border-radius:6px; font-size:0.82rem; margin-right:6px;">🔥 高階臨床實戰</span>`;
+    }
+    return `<span style="background:#E8F5E9; color:#2E7D32; border:1px solid #A5D6A7; font-weight:700; padding:2px 8px; border-radius:6px; font-size:0.82rem; margin-right:6px;">🌱 初階照護基礎</span>`;
   }
 
   // 溫馨音效與輕鬆振奮背景音樂引擎（Web Audio API）
@@ -362,15 +375,19 @@
 
   // ==================== 1. 首頁：陽光交誼廳與兩扇主題門 ====================
   function renderHomeView(root) {
-    const t1Count = getPublishedQuestions("theme1").length;
-    const t2Count = getPublishedQuestions("theme2").length;
+    const allPubT1 = getPublishedQuestions("theme1", "ALL", "all");
+    const allPubT2 = getPublishedQuestions("theme2", "ALL", "all");
+    const t1Adv = allPubT1.filter(q => q.difficulty === "advanced").length;
+    const t2Adv = allPubT2.filter(q => q.difficulty === "advanced").length;
+    const t1Basic = allPubT1.filter(q => q.difficulty !== "advanced").length;
+    const t2Basic = allPubT2.filter(q => q.difficulty !== "advanced").length;
     const cloudConfigured = Boolean(syncEngine.cloudConfig.firebaseDbUrl);
 
     root.innerHTML = `
       <div class="scene-stage-box">
         <div class="scene-header-strip">
           <span>🏡 場景：陽光長照機構・溫馨交誼廳（去 3C 感 Q 版互動教室）</span>
-          <span>📚 已審定發布題庫：共 <strong>${t1Count + t2Count}</strong> 題（五關卡審核通過）</span>
+          <span>📚 題庫統計：共 <strong>${allPubT1.length + allPubT2.length}</strong> 題（🔥 高階實戰 ${t1Adv + t2Adv} 題 ＋ 🌱 初階基礎 ${t1Basic + t2Basic} 題）</span>
         </div>
         <div class="scene-canvas-wrap">
           ${window.CareIllustrations.renderSceneSVG("lounge", "warm", "陽光長照中心・照護學習交誼廳")}
@@ -410,7 +427,7 @@
         <!-- 主題一卡片 -->
         <div class="theme-door-card theme-1">
           <div>
-            <span class="door-tag">主題選項 1 · 已審定 ${t1Count} 題</span>
+            <span class="door-tag">主題選項 1 · 共 ${allPubT1.length} 題（🔥高階 ${t1Adv} 題）</span>
             <h3 style="font-size:1.35rem; color:var(--text-main); margin-bottom:8px;">
               🗣️ 長照失智長者的溝通方法與原則
             </h3>
@@ -418,15 +435,29 @@
               練習不爭辯事實、先承接情緒與確認安全、讀懂非語言疼痛與如廁訊號、使用簡短肯定句與有限二選一，維護成人長輩尊嚴。
             </p>
             <div class="unit-pills">
-              <span class="unit-pill">① 建立安全感與承接情緒 (12題)</span>
-              <span class="unit-pill">② 聽懂非語言訊息與環境調整 (12題)</span>
-              <span class="unit-pill">③ 簡短肯定句與有限選擇 (12題)</span>
-              <span class="unit-pill">④ 維護成人尊嚴與自主感 (12題)</span>
+              <span class="unit-pill">① 建立安全感與承接情緒</span>
+              <span class="unit-pill">② 聽懂非語言訊息與環境調整</span>
+              <span class="unit-pill">③ 簡短肯定句與有限選擇</span>
+              <span class="unit-pill">④ 維護成人尊嚴與自主感</span>
             </div>
+            
+            <div class="form-group" style="margin-bottom:10px;">
+              <label for="select-diff-t1" style="font-weight:800; color:#B71C1C;">🎯 題目難度層次：</label>
+              <select id="select-diff-t1" class="form-select" style="font-weight:700; color:#B71C1C; background:#FFF8E1; border:2px solid #FFB74D;">
+                <option value="advanced" selected>🔥 高階臨床實戰篇（護理鑑別、譫妄、非藥物處置、環境調控）</option>
+                <option value="basic">🌱 初階照護基礎篇（日常同理、溝通引導、基本照護）</option>
+                <option value="all">📚 全部混合題庫（初階＋高階臨床情境綜合實戰）</option>
+              </select>
+            </div>
+
             <div class="form-group">
               <label for="select-unit-t1">選擇練習／開房單元範圍：</label>
               <select id="select-unit-t1" class="form-select">
-                ${UNIT_CATALOG.theme1.map((u) => `<option value="${u.id}">${u.title}</option>`).join("")}
+                <option value="ALL">全部單元（涵蓋全部題目）</option>
+                <option value="T1-U1">單元一：建立安全感與承接情緒</option>
+                <option value="T1-U2">單元二：聽懂非語言訊息與環境調整</option>
+                <option value="T1-U3">單元三：簡短肯定句與有限選擇</option>
+                <option value="T1-U4">單元四：維護成人尊嚴與自主感</option>
               </select>
             </div>
           </div>
@@ -443,7 +474,7 @@
         <!-- 主題二卡片 -->
         <div class="theme-door-card theme-2">
           <div>
-            <span class="door-tag">主題選項 2 · 已審定 ${t2Count} 題</span>
+            <span class="door-tag">主題選項 2 · 共 ${allPubT2.length} 題（🔥高階 ${t2Adv} 題）</span>
             <h3 style="font-size:1.35rem; color:var(--text-main); margin-bottom:8px;">
               🍵 失智長者的照顧方式（日常生活常見問題）
             </h3>
@@ -451,15 +482,29 @@
               聚焦日常最常見照護挑戰：拒食與重複索食、拒澡與穿衣失用、黃昏症候群吵著回家、懷疑物品被偷，以及紅色高風險急症辨識與通報。
             </p>
             <div class="unit-pills">
-              <span class="unit-pill">① 飲食與飲水支持 (12題)</span>
-              <span class="unit-pill">② 沐浴、更衣與如廁清潔 (12題)</span>
-              <span class="unit-pill">③ 作息調整與黃昏時段焦躁 (12題)</span>
-              <span class="unit-pill">④ 物品遺失懷疑與安全異常辨識 (12題)</span>
+              <span class="unit-pill">① 飲食與飲水支持</span>
+              <span class="unit-pill">② 沐浴、更衣與如廁清潔</span>
+              <span class="unit-pill">③ 作息調整與黃昏時段焦躁</span>
+              <span class="unit-pill">④ 物品遺失懷疑與安全異常辨識</span>
             </div>
+
+            <div class="form-group" style="margin-bottom:10px;">
+              <label for="select-diff-t2" style="font-weight:800; color:#B71C1C;">🎯 題目難度層次：</label>
+              <select id="select-diff-t2" class="form-select" style="font-weight:700; color:#B71C1C; background:#FFF8E1; border:2px solid #FFB74D;">
+                <option value="advanced" selected>🔥 高階臨床實戰篇（護理鑑別、譫妄、非藥物處置、環境調控）</option>
+                <option value="basic">🌱 初階照護基礎篇（日常同理、溝通引導、基本照護）</option>
+                <option value="all">📚 全部混合題庫（初階＋高階臨床情境綜合實戰）</option>
+              </select>
+            </div>
+
             <div class="form-group">
               <label for="select-unit-t2">選擇練習／開房單元範圍：</label>
               <select id="select-unit-t2" class="form-select">
-                ${UNIT_CATALOG.theme2.map((u) => `<option value="${u.id}">${u.title}</option>`).join("")}
+                <option value="ALL">全部單元（涵蓋全部題目）</option>
+                <option value="T2-U1">單元一：飲食與飲水支持</option>
+                <option value="T2-U2">單元二：沐浴、更衣與如廁清潔</option>
+                <option value="T2-U3">單元三：作息調整與黃昏時段焦躁</option>
+                <option value="T2-U4">單元四：物品遺失懷疑與安全異常辨識</option>
               </select>
             </div>
           </div>
@@ -492,8 +537,10 @@
         SoundFX.play("click");
         const themeId = btn.getAttribute("data-theme");
         const selEl = document.getElementById(themeId === "theme1" ? "select-unit-t1" : "select-unit-t2");
+        const diffEl = document.getElementById(themeId === "theme1" ? "select-diff-t1" : "select-diff-t2");
         const unitFilter = selEl ? selEl.value : "ALL";
-        startSoloMode(themeId, unitFilter);
+        const difficulty = diffEl ? diffEl.value : "advanced";
+        startSoloMode(themeId, unitFilter, difficulty);
       };
     });
 
@@ -502,15 +549,21 @@
         SoundFX.play("click");
         const themeId = btn.getAttribute("data-theme");
         const selEl = document.getElementById(themeId === "theme1" ? "select-unit-t1" : "select-unit-t2");
+        const diffEl = document.getElementById(themeId === "theme1" ? "select-diff-t1" : "select-diff-t2");
         const unitFilter = selEl ? selEl.value : "ALL";
-        await startHostLobby(themeId, unitFilter, btn);
+        const difficulty = diffEl ? diffEl.value : "advanced";
+        await startHostLobby(themeId, unitFilter, difficulty, btn);
       };
     });
   }
 
   // ==================== 2. 單人自主練習模式 (2A + 3A) ====================
-  function startSoloMode(themeId, unitFilter) {
-    const pool = getPublishedQuestions(themeId, unitFilter);
+  function startSoloMode(themeId, unitFilter = "ALL", difficulty = "advanced") {
+    let pool = getPublishedQuestions(themeId, unitFilter, difficulty);
+    // 若該單元在高階難度無題，自動後備為全部題庫
+    if (!pool.length) {
+      pool = getPublishedQuestions(themeId, unitFilter, "all");
+    }
     if (!pool.length) {
       alert("目前所選範圍沒有已發布之題目。");
       return;
@@ -518,6 +571,7 @@
     AppState.solo = {
       themeId,
       unitFilter,
+      difficulty,
       questions: pool,
       currentIndex: 0,
       selectedChoice: null,
@@ -549,9 +603,10 @@
 
     root.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
-        <div>
+        <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
+          ${renderDifficultyBadge(q.difficulty)}
           <span class="risk-badge ${risk.cls}">${risk.icon} ${risk.text}</span>
-          <span style="margin-left:8px; font-weight:800; color:var(--wood-dark);">
+          <span style="margin-left:4px; font-weight:800; color:var(--wood-dark);">
             【單人自主練習】第 ${currentIndex + 1} / ${questions.length} 題（題號：${q.id}）
           </span>
         </div>
@@ -779,7 +834,7 @@
     `;
 
     document.getElementById("btn-solo-restart").onclick = () => {
-      startSoloMode(AppState.solo.themeId, AppState.solo.unitFilter);
+      startSoloMode(AppState.solo.themeId, AppState.solo.unitFilter, AppState.solo.difficulty);
     };
     document.getElementById("btn-solo-home").onclick = () => {
       AppState.view = "HOME";
@@ -788,7 +843,7 @@
   }
 
   // ==================== 3. 師長開房模式：等候室與控場 (4B + 5A + 8A) ====================
-  async function startHostLobby(themeId, unitFilter, btn = null) {
+  async function startHostLobby(themeId, unitFilter = "ALL", difficulty = "advanced", btn = null) {
     const originalBtnHtml = btn ? btn.innerHTML : "";
     if (btn) {
       btn.disabled = true;
@@ -796,7 +851,10 @@
       btn.innerHTML = "⏳ 正在建立遊戲室……";
     }
     try {
-      const pool = getPublishedQuestions(themeId, unitFilter);
+      let pool = getPublishedQuestions(themeId, unitFilter, difficulty);
+      if (!pool.length) {
+        pool = getPublishedQuestions(themeId, unitFilter, "all");
+      }
       if (!pool.length) {
         alert("所選範圍無已審定題目。");
         if (btn) {
@@ -810,6 +868,7 @@
       const roomState = await syncEngine.createRoom({
         themeId,
         unitFilter,
+        difficulty,
         questionIds
       });
       AppState.host.roomState = roomState;
@@ -867,7 +926,7 @@
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
               <h3 style="color:var(--wood-dark);">👥 已進入交誼廳的學員（共 ${participants.length} 人）</h3>
               <span style="font-size:0.88rem; color:var(--accent-green); font-weight:700;">
-                題組規模：共 ${st.questionIds.length} 題（每場結束後 QR 自動失效）
+                難度：${st.difficulty === "advanced" ? "🔥 高階臨床實戰篇" : st.difficulty === "basic" ? "🌱 初階照護基礎篇" : "📚 綜合題庫"}｜題組：共 ${st.questionIds.length} 題
               </span>
             </div>
             <p style="font-size:0.9rem; color:var(--text-sub); margin-top:6px;">
@@ -1026,9 +1085,10 @@
 
     root.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
-        <div>
+        <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
+          ${renderDifficultyBadge(q.difficulty)}
           <span class="risk-badge ${risk.cls}">${risk.icon} ${risk.text}</span>
-          <span style="margin-left:8px; font-weight:800; color:var(--wood-dark);">
+          <span style="margin-left:4px; font-weight:800; color:var(--wood-dark);">
             【房號：${st.roomCode}】第 ${st.currentIndex + 1} / ${st.questionIds.length} 題｜在線學員：${participantCount} 人
           </span>
         </div>
@@ -1418,7 +1478,10 @@
 
     root.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
-        <span class="risk-badge ${risk.cls}">${risk.icon} 第 ${st.currentIndex + 1} / ${st.questionIds.length} 題</span>
+        <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
+          ${renderDifficultyBadge(q.difficulty)}
+          <span class="risk-badge ${risk.cls}">${risk.icon} 第 ${st.currentIndex + 1} / ${st.questionIds.length} 題</span>
+        </div>
         <span style="font-weight:800; color:var(--wood-dark);">👤 ${AppState.student.nickname}（房號：${st.roomCode}）</span>
       </div>
 
@@ -1610,7 +1673,10 @@
                 (q) => `
               <div style="background:#FFFFFF; border:2px solid #D7CCC8; border-radius:12px; padding:12px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-                  <strong>[${q.id}] ${q.unitTitle}（正解：${q.correct}）</strong>
+                  <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
+                    ${renderDifficultyBadge(q.difficulty)}
+                    <strong>[${q.id}] ${q.unitTitle}（正解：${q.correct}）</strong>
+                  </div>
                   <span class="risk-badge ${RISK_LABELS[q.riskLevel]?.cls || "risk-green"}">${q.riskLevel.toUpperCase()}</span>
                 </div>
                 <div style="font-size:0.9rem; margin:6px 0;">${q.stem}</div>
