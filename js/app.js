@@ -49,9 +49,9 @@
   // 難度徽章渲染標籤
   function renderDifficultyBadge(diff) {
     if (diff === "advanced") {
-      return `<span style="background:#FFE0B2; color:#BF360C; border:1px solid #FFB74D; font-weight:800; padding:2px 8px; border-radius:6px; font-size:0.82rem; margin-right:6px;">🔥 高階臨床實戰</span>`;
+      return `<span style="background:#FFF3E0; color:#E65100; border:1px solid #FFB74D; font-weight:800; padding:2px 8px; border-radius:6px; font-size:0.82rem; margin-right:6px;">🌟 實務進階</span>`;
     }
-    return `<span style="background:#E8F5E9; color:#2E7D32; border:1px solid #A5D6A7; font-weight:700; padding:2px 8px; border-radius:6px; font-size:0.82rem; margin-right:6px;">🌱 初階照護基礎</span>`;
+    return `<span style="background:#E8F5E9; color:#2E7D32; border:1px solid #A5D6A7; font-weight:700; padding:2px 8px; border-radius:6px; font-size:0.82rem; margin-right:6px;">🌱 基礎入門</span>`;
   }
 
   // 溫馨音效與輕鬆振奮背景音樂引擎（Web Audio API）
@@ -387,7 +387,7 @@
       <div class="scene-stage-box">
         <div class="scene-header-strip">
           <span>🏡 場景：陽光長照機構・溫馨交誼廳（去 3C 感 Q 版互動教室）</span>
-          <span>📚 題庫統計：共 <strong>${allPubT1.length + allPubT2.length}</strong> 題（🔥 高階實戰 ${t1Adv + t2Adv} 題 ＋ 🌱 初階基礎 ${t1Basic + t2Basic} 題）</span>
+          <span>📚 題庫統計：共 <strong>${allPubT1.length + allPubT2.length}</strong> 題（🌟 實務進階 ${t1Adv + t2Adv} 題 ＋ 🌱 基礎入門 ${t1Basic + t2Basic} 題）</span>
         </div>
         <div class="scene-canvas-wrap">
           ${window.CareIllustrations.renderSceneSVG("lounge", "warm", "陽光長照中心・照護學習交誼廳")}
@@ -427,7 +427,7 @@
         <!-- 主題一卡片 -->
         <div class="theme-door-card theme-1">
           <div>
-            <span class="door-tag">主題選項 1 · 共 ${allPubT1.length} 題（🔥高階 ${t1Adv} 題）</span>
+            <span class="door-tag">主題選項 1 · 共 ${allPubT1.length} 題（進階 ${t1Adv} 題）</span>
             <h3 style="font-size:1.35rem; color:var(--text-main); margin-bottom:8px;">
               🗣️ 長照失智長者的溝通方法與原則
             </h3>
@@ -442,11 +442,11 @@
             </div>
             
             <div class="form-group" style="margin-bottom:10px;">
-              <label for="select-diff-t1" style="font-weight:800; color:#B71C1C;">🎯 題目難度層次：</label>
-              <select id="select-diff-t1" class="form-select" style="font-weight:700; color:#B71C1C; background:#FFF8E1; border:2px solid #FFB74D;">
-                <option value="advanced" selected>🔥 高階臨床實戰篇（護理鑑別、譫妄、非藥物處置、環境調控）</option>
-                <option value="basic">🌱 初階照護基礎篇（日常同理、溝通引導、基本照護）</option>
-                <option value="all">📚 全部混合題庫（初階＋高階臨床情境綜合實戰）</option>
+              <label for="select-diff-t1" style="font-weight:800; color:#E65100;">🎯 題目難度層次：</label>
+              <select id="select-diff-t1" class="form-select" style="font-weight:700; color:#E65100; background:#FFF8E1; border:2px solid #FFB74D;">
+                <option value="advanced" selected>🌟 實務進階篇（長照照服員與家屬情境精選・推薦）</option>
+                <option value="basic">🌱 基礎入門篇（日常同理、溝通引導、基本照護）</option>
+                <option value="all">📚 全部混合題庫（基礎＋進階實務綜合演練）</option>
               </select>
             </div>
 
@@ -474,7 +474,7 @@
         <!-- 主題二卡片 -->
         <div class="theme-door-card theme-2">
           <div>
-            <span class="door-tag">主題選項 2 · 共 ${allPubT2.length} 題（🔥高階 ${t2Adv} 題）</span>
+            <span class="door-tag">主題選項 2 · 共 ${allPubT2.length} 題（進階 ${t2Adv} 題）</span>
             <h3 style="font-size:1.35rem; color:var(--text-main); margin-bottom:8px;">
               🍵 失智長者的照顧方式（日常生活常見問題）
             </h3>
@@ -489,11 +489,11 @@
             </div>
 
             <div class="form-group" style="margin-bottom:10px;">
-              <label for="select-diff-t2" style="font-weight:800; color:#B71C1C;">🎯 題目難度層次：</label>
-              <select id="select-diff-t2" class="form-select" style="font-weight:700; color:#B71C1C; background:#FFF8E1; border:2px solid #FFB74D;">
-                <option value="advanced" selected>🔥 高階臨床實戰篇（護理鑑別、譫妄、非藥物處置、環境調控）</option>
-                <option value="basic">🌱 初階照護基礎篇（日常同理、溝通引導、基本照護）</option>
-                <option value="all">📚 全部混合題庫（初階＋高階臨床情境綜合實戰）</option>
+              <label for="select-diff-t2" style="font-weight:800; color:#E65100;">🎯 題目難度層次：</label>
+              <select id="select-diff-t2" class="form-select" style="font-weight:700; color:#E65100; background:#FFF8E1; border:2px solid #FFB74D;">
+                <option value="advanced" selected>🌟 實務進階篇（長照照服員與家屬情境精選・推薦）</option>
+                <option value="basic">🌱 基礎入門篇（日常同理、溝通引導、基本照護）</option>
+                <option value="all">📚 全部混合題庫（基礎＋進階實務綜合演練）</option>
               </select>
             </div>
 
@@ -926,7 +926,7 @@
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
               <h3 style="color:var(--wood-dark);">👥 已進入交誼廳的學員（共 ${participants.length} 人）</h3>
               <span style="font-size:0.88rem; color:var(--accent-green); font-weight:700;">
-                難度：${st.difficulty === "advanced" ? "🔥 高階臨床實戰篇" : st.difficulty === "basic" ? "🌱 初階照護基礎篇" : "📚 綜合題庫"}｜題組：共 ${st.questionIds.length} 題
+                難度：${st.difficulty === "advanced" ? "🌟 實務進階篇" : st.difficulty === "basic" ? "🌱 基礎入門篇" : "📚 綜合題庫"}｜題組：共 ${st.questionIds.length} 題
               </span>
             </div>
             <p style="font-size:0.9rem; color:var(--text-sub); margin-top:6px;">
