@@ -9,7 +9,7 @@
 (function () {
   const syncEngine = new window.CareRoomSyncEngine();
 
-  // 取得全題庫（預設 96 題 + 本機送審題庫）
+  // 取得全題庫（預設題庫 + 使用者答案修正覆寫 + 本機送審題庫）
   function getAllQuestions() {
     const base = [
       ...(window.QUESTIONS_THEME_1 || []),
@@ -20,7 +20,48 @@
       const raw = localStorage.getItem("care_game_custom_questions_v1");
       if (raw) custom = JSON.parse(raw);
     } catch (e) {}
-    return [...base, ...custom];
+
+    // 讀取使用者對題目指定答案的修正（Overrides）
+    let overrides = {};
+    try {
+      const oRaw = localStorage.getItem("care_game_answer_overrides_v1");
+      if (oRaw) overrides = JSON.parse(oRaw);
+    } catch (e) {}
+
+    return [...base, ...custom].map((q) => {
+      if (overrides && overrides[q.id]) {
+        return {
+          ...q,
+          ...overrides[q.id],
+          isAnswerOverridden: true,
+          originalCorrect: q.correct
+        };
+      }
+      return q;
+    });
+  }
+
+  // 儲存題目答案修正
+  function saveQuestionOverride(qid, data) {
+    let overrides = {};
+    try {
+      overrides = JSON.parse(localStorage.getItem("care_game_answer_overrides_v1") || "{}");
+    } catch (e) {}
+    overrides[qid] = {
+      ...(overrides[qid] || {}),
+      ...data,
+      updatedAt: Date.now()
+    };
+    localStorage.setItem("care_game_answer_overrides_v1", JSON.stringify(overrides));
+  }
+
+  // 重置題目為原始答案
+  function resetQuestionOverride(qid) {
+    try {
+      const overrides = JSON.parse(localStorage.getItem("care_game_answer_overrides_v1") || "{}");
+      delete overrides[qid];
+      localStorage.setItem("care_game_answer_overrides_v1", JSON.stringify(overrides));
+    } catch (e) {}
   }
 
   // 7A：僅通過全部五關卡審核（auditStatus === 'published'）的題目才可進入正式課堂與練習
@@ -660,16 +701,24 @@
         <!-- 3A 規範：單人模式不顯示虛構人數分佈，誠實呈現正解與完整四選項照護筆記 -->
         <div class="care-notebook">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
-            <h3 style="font-size:1.3rem; color:${isCorrect ? "#1B5E20" : "#C0392B"};">
-              ${
-                isCorrect
-                  ? `✅ 回答正確！正確答案是【${q.correct}】`
-                  : `💡 您選擇了【${selectedChoice}】，本題最適合的正確答案是【${q.correct}】`
-              }
-            </h3>
-            <span style="font-size:0.85rem; background:#EFEBE9; padding:4px 10px; border-radius:8px; color:var(--wood-dark); font-weight:700;">
-              📌 單人練習模式（依 3A 規範：僅顯示正確答案與解析，不顯示模擬人數分佈）
-            </span>
+            <div>
+              <h3 style="font-size:1.3rem; color:${isCorrect ? "#1B5E20" : "#C0392B"}; margin:0;">
+                ${
+                  isCorrect
+                    ? `✅ 回答正確！正確答案是【${q.correct}】`
+                    : `💡 您選擇了【${selectedChoice}】，本題最適合的正確答案是【${q.correct}】`
+                }
+                ${q.isAnswerOverridden ? `<span style="font-size:0.75rem; background:#FFF3E0; color:#E65100; border:1px solid #FFB74D; border-radius:4px; padding:2px 6px; margin-left:6px;">🛠️ 已由使用者校訂答案</span>` : ""}
+              </h3>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <button class="wood-btn" data-edit-ans-qid="${q.id}" style="font-size:0.85rem; padding:4px 12px; background:#FFF9C4; border:1.5px solid #F57F17; color:#E65100;">
+                ✏️ 指定答案有誤？點此修正
+              </button>
+              <span style="font-size:0.85rem; background:#EFEBE9; padding:4px 10px; border-radius:8px; color:var(--wood-dark); font-weight:700;">
+                📌 單人練習模式
+              </span>
+            </div>
           </div>
 
           <div style="background:#E8F5E9; border:2px solid #81C784; border-radius:12px; padding:12px 16px; margin-bottom:14px;">
@@ -1170,7 +1219,15 @@
         isRevealed
           ? `
         <div class="care-notebook">
-          <h3 style="color:#1B5E20; margin-bottom:10px;">✅ 正確答案：【選項 ${q.correct}】</h3>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+            <h3 style="color:#1B5E20; margin:0;">
+              ✅ 正確答案：【選項 ${q.correct}】
+              ${q.isAnswerOverridden ? `<span style="font-size:0.75rem; background:#FFF3E0; color:#E65100; border:1px solid #FFB74D; border-radius:4px; padding:2px 6px; margin-left:6px;">🛠️ 已由使用者校訂答案</span>` : ""}
+            </h3>
+            <button class="wood-btn" data-edit-ans-qid="${q.id}" style="font-size:0.85rem; padding:4px 12px; background:#FFF9C4; border:1.5px solid #F57F17; color:#E65100;">
+              ✏️ 指定答案有誤？點此修正
+            </button>
+          </div>
           <div style="background:#E8F5E9; border:2px solid #81C784; border-radius:12px; padding:12px 16px; margin-bottom:14px;">
             <strong>🌟 核心照護原則：</strong> ${q.corePrinciple}
           </div>
@@ -1526,7 +1583,7 @@
                 cls = "selected-choice";
               }
               return `
-                <button class="option-card opt-${letter} ${cls}" data-stu-choice="${letter}" ${myVote || isRevealed ? "disabled" : ""}>
+                <button class="option-card opt-${letter} ${cls}" data-stu-choice="${letter}" ${isRevealed ? "disabled" : ""}>
                   <span class="opt-letter-badge">${letter}</span>
                   <div style="flex:1;">
                     <div style="font-size:0.85rem; color:var(--text-muted);">選項 ${letter} ${OPTION_ICONS[letter]}</div>
@@ -1542,7 +1599,7 @@
           ${
             !isRevealed
               ? myVote
-                ? `✅ 您已投出【選項 ${myVote}】！請等待師長揭曉全班 A/B/C/D 人數分佈與正確答案。`
+                ? `✅ 您已投出【選項 ${myVote}】（師長揭曉前可隨時點選其他選項更換）！請等待師長揭曉全班分佈與正確答案。`
                 : "👆 請點選上方 A、B、C、D 其中一個選項送出答案"
               : myVote
               ? myVote === q.correct
@@ -1559,13 +1616,19 @@
         isRevealed
           ? `
         <div class="care-notebook">
-          <h3 style="color:${myVote === q.correct ? "#1B5E20" : "#C0392B"}; margin-bottom:10px;">
-            ${
-              myVote === q.correct
-                ? `✅ 正確答案：【選項 ${q.correct}】`
-                : `📌 答錯溫馨提醒：本題正確答案是【選項 ${q.correct}】`
-            }
-          </h3>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+            <h3 style="color:${myVote === q.correct ? "#1B5E20" : "#C0392B"}; margin:0;">
+              ${
+                myVote === q.correct
+                  ? `✅ 正確答案：【選項 ${q.correct}】`
+                  : `📌 答錯溫馨提醒：本題正確答案是【選項 ${q.correct}】`
+              }
+              ${q.isAnswerOverridden ? `<span style="font-size:0.75rem; background:#FFF3E0; color:#E65100; border:1px solid #FFB74D; border-radius:4px; padding:2px 6px; margin-left:6px;">🛠️ 已校訂正解</span>` : ""}
+            </h3>
+            <button class="wood-btn" data-edit-ans-qid="${q.id}" style="font-size:0.82rem; padding:3px 10px; background:#FFF9C4; border:1.5px solid #F57F17; color:#E65100;">
+              ✏️ 指定答案有誤？點此修正
+            </button>
+          </div>
           <div style="background:#E8F5E9; border:2px solid #81C784; border-radius:12px; padding:12px 16px; margin-bottom:14px;">
             <strong>🌟 核心照護原則：</strong> ${q.corePrinciple}
           </div>
@@ -1722,7 +1785,12 @@
                     ? `<button class="wood-btn green" data-approve-id="${q.id}" style="font-size:0.8rem; padding:4px 12px;">
                         ✅ 完成五關卡審核簽核並發布
                       </button>`
-                    : `<div style="font-size:0.8rem; color:var(--text-muted);">SOP對照：${q.sopReference}｜複審日：${q.reviewDate}</div>`
+                    : `<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
+                        <span>SOP對照：${q.sopReference}｜正解：【${q.correct}】${q.isAnswerOverridden ? '<strong style="color:#E65100;">（已校訂）</strong>' : ''}</span>
+                        <button class="wood-btn" data-edit-ans-qid="${q.id}" style="font-size:0.78rem; padding:2px 8px; background:#FFF9C4; border:1px solid #F57F17; color:#E65100;">
+                          ✏️ 修正答案
+                        </button>
+                      </div>`
                 }
               </div>
             `
@@ -1949,6 +2017,138 @@
     }, 3800);
   }
 
+  // 題目答案修正彈窗（允許使用者/師長修正指定答案、核心原則與解析）
+  function openEditAnswerModal(qid) {
+    const modal = document.getElementById("modal-container");
+    if (!modal || !qid) return;
+    const allQ = getAllQuestions();
+    const q = allQ.find((item) => item.id === qid);
+    if (!q) {
+      alert("查無此題目資料！");
+      return;
+    }
+
+    modal.classList.remove("hidden");
+    const isOverridden = Boolean(q.isAnswerOverridden);
+
+    modal.innerHTML = `
+      <div class="modal-window" style="max-width:620px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div>
+            <h2 style="color:var(--wood-dark); font-size:1.3rem;">✏️ 修正本題指定答案與臨床解析</h2>
+            <div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">
+              題號：<strong>${q.id}</strong>｜單元：${q.unitTitle}
+            </div>
+          </div>
+          <button class="wood-btn" id="btn-close-edit-ans">✖ 關閉</button>
+        </div>
+
+        ${
+          isOverridden
+            ? `<div style="background:#FFF3E0; border:1.5px solid #FFB74D; border-radius:8px; padding:8px 12px; margin-bottom:12px; font-size:0.85rem; color:#E65100; font-weight:700;">
+                ⚠️ 本題先前已被使用者校訂（原廠正解：【${q.originalCorrect}】➜ 目前指定正解：【${q.correct}】）
+              </div>`
+            : ""
+        }
+
+        <div style="background:#F5F5F5; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:0.9rem; line-height:1.5; color:var(--text-main);">
+          <strong>💬 題目情境：</strong>${q.stem}
+        </div>
+
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="font-weight:800; color:#B71C1C;">🎯 指定正確答案選項：</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px;">
+            ${["A", "B", "C", "D"]
+              .map(
+                (letter) => `
+              <label style="display:flex; align-items:flex-start; gap:8px; padding:8px; border:2px solid ${q.correct === letter ? "#2E7D32" : "#D7CCC8"}; border-radius:8px; background:${q.correct === letter ? "#E8F5E9" : "#FFF"}; cursor:pointer;">
+                <input type="radio" name="edit-ans-choice" value="${letter}" ${q.correct === letter ? "checked" : ""} style="margin-top:3px;" />
+                <div style="font-size:0.88rem;">
+                  <strong style="color:var(--wood-dark);">【選項 ${letter}】</strong>
+                  <div style="color:var(--text-sub); margin-top:2px;">${q.options[letter]}</div>
+                </div>
+              </label>
+            `
+              )
+              .join("")}
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:12px;">
+          <label for="edit-ans-principle" style="font-weight:700;">🌟 核心照護原則說明（可自訂補充）：</label>
+          <textarea id="edit-ans-principle" class="form-textarea" rows="2" style="font-size:0.9rem;">${q.corePrinciple || ""}</textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom:14px;">
+          <label for="edit-ans-reason" style="font-weight:700;">📖 正確選項原因解析（可自訂補充）：</label>
+          <textarea id="edit-ans-reason" class="form-textarea" rows="2" style="font-size:0.9rem;">${(q.optionReasons && q.optionReasons[q.correct]) || ""}</textarea>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:16px; padding-top:12px; border-top:1px dashed #D7CCC8;">
+          <div>
+            ${
+              isOverridden
+                ? `<button class="wood-btn danger" id="btn-reset-ans" style="font-size:0.85rem; padding:6px 12px;">🔄 還原原廠設定答案</button>`
+                : ""
+            }
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="wood-btn" id="btn-cancel-edit-ans">取消</button>
+            <button class="wood-btn primary" id="btn-save-edit-ans">💾 儲存並套用修正</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("btn-close-edit-ans").onclick = () => {
+      modal.classList.add("hidden");
+    };
+    document.getElementById("btn-cancel-edit-ans").onclick = () => {
+      modal.classList.add("hidden");
+    };
+
+    const resetBtn = document.getElementById("btn-reset-ans");
+    if (resetBtn) {
+      resetBtn.onclick = async () => {
+        if (confirm("確定要清除針對本題的答案修正，恢復原始題庫設定嗎？")) {
+          resetQuestionOverride(qid);
+          modal.classList.add("hidden");
+          if (AppState.host && AppState.host.roomState) {
+            await syncEngine.saveState(AppState.host.roomState.roomCode, AppState.host.roomState);
+          }
+          renderApp();
+        }
+      };
+    }
+
+    document.getElementById("btn-save-edit-ans").onclick = async () => {
+      const selectedRadio = modal.querySelector("input[name='edit-ans-choice']:checked");
+      const newCorrect = selectedRadio ? selectedRadio.value : q.correct;
+      const newPrinciple = document.getElementById("edit-ans-principle").value.trim();
+      const newReason = document.getElementById("edit-ans-reason").value.trim();
+
+      const newReasons = { ...(q.optionReasons || {}) };
+      if (newReason) {
+        newReasons[newCorrect] = newReason;
+      }
+
+      saveQuestionOverride(qid, {
+        correct: newCorrect,
+        corePrinciple: newPrinciple || q.corePrinciple,
+        optionReasons: newReasons
+      });
+
+      alert(`✅ 成功修正！題號 [${qid}] 指定正解已更新為【選項 ${newCorrect}】！`);
+      modal.classList.add("hidden");
+
+      // 若目前在開房中，同步最新狀態給學員
+      if (AppState.host && AppState.host.roomState) {
+        await syncEngine.saveState(AppState.host.roomState.roomCode, AppState.host.roomState);
+      }
+      renderApp();
+    };
+  }
+
   // 初始化與監聽同步事件
   function init() {
     // 監聽房間狀態更新
@@ -2030,6 +2230,15 @@
         btnBgm.classList.toggle("active-toggle", isPlaying);
       };
     }
+
+    // 全域監聽「修正本題答案」按鈕點擊
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-edit-ans-qid]");
+      if (btn) {
+        const qid = btn.getAttribute("data-edit-ans-qid");
+        if (qid) openEditAnswerModal(qid);
+      }
+    });
 
     // 檢查網址是否帶有 ?room=XXXXXX&token=YYYY（掃描 QR Code 自動跳轉學員加入畫面）
     const params = new URLSearchParams(window.location.search);

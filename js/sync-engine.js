@@ -322,14 +322,14 @@ class CareRoomSyncEngine {
         if (["A", "B", "C", "D"].includes(choice)) {
           if (!curState.votes) curState.votes = {};
           if (!curState.votes[questionId]) curState.votes[questionId] = {};
-          if (!curState.votes[questionId][participantId]) {
-            curState.votes[questionId][participantId] = choice;
-            if (curState.participants && curState.participants[participantId]) {
-              curState.participants[participantId].lastSeen = Date.now();
-            }
-            console.log(`[Host] 收到投票：${participantId} 投 ${choice}`);
-            await this.saveState(roomCode, curState);
+          // 支援學員於揭曉前隨時修正/更換答案
+          const prevChoice = curState.votes[questionId][participantId];
+          curState.votes[questionId][participantId] = choice;
+          if (curState.participants && curState.participants[participantId]) {
+            curState.participants[participantId].lastSeen = Date.now();
           }
+          console.log(`[Host] 收到投票${prevChoice ? `(更換答案：${prevChoice} -> ${choice})` : ''}：${participantId} 投 ${choice}`);
+          await this.saveState(roomCode, curState);
         }
       }
     }
